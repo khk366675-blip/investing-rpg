@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Investing RPG - 3종족 카드 비교 렌더러</title>
+  <title>Investing RPG - 11종족 카드 대시보드</title>
   
   <!-- React 18 & Babel CDN -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
@@ -18,8 +18,8 @@
   <style>
     /* CSS Variables & Base Styles */
     :root {
-      --bg-gradient: radial-gradient(circle at center, #0e121a 0%, #030508 100%);
-      --card-bg: linear-gradient(135deg, rgba(16, 20, 30, 0.9) 0%, rgba(8, 10, 15, 0.98) 100%);
+      --bg-gradient: radial-gradient(circle at center, #0a0d14 0%, #020305 100%);
+      --card-bg: linear-gradient(135deg, rgba(14, 18, 28, 0.92) 0%, rgba(6, 8, 12, 0.99) 100%);
       --color-text-primary: #f8fafc;
       --color-text-secondary: #94a3b8;
     }
@@ -39,8 +39,8 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      overflow-x: auto;
-      padding: 3rem 2rem;
+      overflow-x: hidden;
+      padding: 3rem 1.5rem;
     }
 
     header {
@@ -49,10 +49,10 @@
     }
 
     header h1 {
-      font-size: 2.5rem;
+      font-size: 2.6rem;
       font-weight: 800;
       letter-spacing: -0.05em;
-      background: linear-gradient(135deg, #fff 30%, #ffdf00 100%);
+      background: linear-gradient(135deg, #fff 40%, #ffdf00 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 0.5rem;
@@ -63,20 +63,20 @@
       font-size: 1rem;
     }
 
-    /* Container for horizontal card compare render */
+    /* Grid Layout for all 11 races + ETF */
     .compare-container {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
       gap: 24px;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
       width: 100%;
-      max-width: 1200px;
+      max-width: 1550px;
+      margin: 0 auto;
+      justify-content: center;
     }
 
     /* Card Container with Dynamic Color Variable Borders */
     .card-container {
-      width: 360px;
+      width: 350px;
       height: 645px;
       background: var(--card-bg);
       border-radius: 24px;
@@ -86,14 +86,14 @@
       flex-direction: column;
       justify-content: space-between;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 
-                  0 0 20px var(--color-primary-glow);
+                  0 0 18px var(--color-primary-glow);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       cursor: pointer;
     }
 
-    /* Double border effect for Legendary Frame using color variables */
+    /* Double border effect for Legendary/Rarity Frame using color variables */
     .card-container::before {
       content: '';
       position: absolute;
@@ -107,10 +107,21 @@
       pointer-events: none;
     }
 
+    /* Custom Frame Overrides for Common/Rare rarity */
+    .card-container.common::before {
+      background: linear-gradient(135deg, #475569 0%, #334155 100%);
+    }
+    .card-container.common {
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+    }
+
     .card-container:hover {
-      transform: translateY(-12px) scale(1.015);
+      transform: translateY(-10px) scale(1.015);
       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), 
                   0 0 35px var(--color-primary);
+    }
+    .card-container.common:hover {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255,255,255,0.1);
     }
 
     /* Swapped Text Layout Header */
@@ -124,12 +135,12 @@
     .title-section {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
     }
 
-    /* Race name is now MAIN */
+    /* Race name is MAIN */
     .race-main-title {
-      font-size: 1.45rem;
+      font-size: 1.35rem;
       font-weight: 800;
       color: #fff;
       text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
@@ -143,41 +154,47 @@
       gap: 8px;
     }
 
-    /* Ticker name is now SUB-MAIN */
+    /* Ticker name is SUB-MAIN */
     .ticker-sub-title {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--color-primary);
       text-shadow: 0 0 8px var(--color-primary-glow);
     }
 
     .sector-badge {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 600;
       color: var(--color-text-secondary);
       background: rgba(255, 255, 255, 0.05);
-      padding: 1px 6px;
+      padding: 1px 5px;
       border-radius: 4px;
     }
 
     .rarity-tag {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 800;
       letter-spacing: 0.12em;
       color: var(--color-primary);
       text-shadow: 0 0 8px var(--color-primary-glow);
       border: 1.5px solid var(--color-primary);
-      padding: 3px 8px;
+      padding: 2.5px 7px;
       border-radius: 6px;
       background: var(--color-primary-glow);
+    }
+    .card-container.common .rarity-tag {
+      color: #94a3b8;
+      border-color: #475569;
+      background: rgba(71,85,105,0.2);
+      text-shadow: none;
     }
 
     /* Character Graphic Viewport */
     .card-graphic-wrapper {
       width: 100%;
       height: 250px;
-      background: radial-gradient(circle at center, rgba(20, 24, 36, 0.5) 0%, rgba(5, 7, 10, 0.9) 100%);
+      background: radial-gradient(circle at center, rgba(16, 20, 30, 0.5) 0%, rgba(4, 5, 8, 0.95) 100%);
       border-radius: 16px;
       position: relative;
       display: flex;
@@ -203,7 +220,7 @@
       animation: pulse 1.8s infinite ease-in-out;
       transform-origin: 200px 242px;
     }
-
+    
     .pulse-heart-giant {
       animation: pulse 1.8s infinite ease-in-out;
       transform-origin: 200px 282px;
@@ -218,17 +235,21 @@
     }
 
     .star-icon {
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       fill: var(--color-primary);
       filter: drop-shadow(0 0 4px var(--color-primary-glow));
+    }
+    .card-container.common .star-icon {
+      fill: #64748b;
+      filter: none;
     }
 
     /* Stats Panel */
     .stats-panel {
       display: flex;
       flex-direction: column;
-      gap: 9px;
+      gap: 8px;
       z-index: 10;
     }
 
@@ -242,7 +263,7 @@
     .stat-label-container {
       display: flex;
       justify-content: space-between;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 500;
       color: var(--color-text-secondary);
     }
@@ -266,16 +287,16 @@
     /* Stat bar */
     .stat-bar-bg {
       width: 100%;
-      height: 6px;
+      height: 5px;
       background: rgba(255, 255, 255, 0.08);
-      border-radius: 3px;
+      border-radius: 2.5px;
       overflow: hidden;
       position: relative;
     }
 
     .stat-bar-fill {
       height: 100%;
-      border-radius: 3px;
+      border-radius: 2.5px;
       background: #475569;
       transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -293,13 +314,13 @@
 
     /* Estimated badge for DEF */
     .estimated-pill {
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       font-weight: 700;
       color: var(--color-accent);
       background: var(--color-accent-glow);
       border: 1px solid var(--color-accent);
-      padding: 0 4px;
-      border-radius: 4px;
+      padding: 0 3px;
+      border-radius: 3px;
       cursor: help;
     }
 
@@ -309,12 +330,12 @@
       top: -245px;
       left: 50%;
       transform: translateX(-50%) translateY(10px);
-      width: 310px;
-      background: rgba(10, 14, 24, 0.98);
+      width: 300px;
+      background: rgba(8, 11, 18, 0.99);
       border: 1.5px solid var(--color-accent);
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 20px var(--color-accent-glow);
       border-radius: 12px;
-      padding: 16px;
+      padding: 14px;
       z-index: 100;
       opacity: 0;
       visibility: hidden;
@@ -329,32 +350,32 @@
     }
 
     .tooltip-header {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 700;
       color: #fff;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 8px;
-      margin-bottom: 8px;
+      padding-bottom: 6px;
+      margin-bottom: 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .tooltip-header span:first-child {
-      font-size: 0.7rem;
-      padding: 2px 6px;
-      border-radius: 4px;
+      font-size: 0.65rem;
+      padding: 1px 5px;
+      border-radius: 3px;
       background: var(--color-accent);
       color: #000;
       font-weight: 800;
     }
 
     .tooltip-body {
-      font-size: 0.75rem;
-      line-height: 1.5;
+      font-size: 0.72rem;
+      line-height: 1.45;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
       color: #cbd5e1;
     }
 
@@ -373,10 +394,10 @@
     }
 
     .tooltip-note {
-      margin-top: 6px;
-      padding-top: 6px;
+      margin-top: 5px;
+      padding-top: 5px;
       border-top: 1px dashed rgba(255, 255, 255, 0.08);
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: #94a3b8;
       font-style: italic;
     }
@@ -391,17 +412,17 @@
     }
 
     .card-subfaction-desc {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--color-text-primary);
       letter-spacing: 0.05em;
     }
 
     .card-type-label {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--color-text-secondary);
-      margin-top: 2px;
-      letter-spacing: 0.1em;
+      margin-top: 1px;
+      letter-spacing: 0.08em;
     }
   </style>
 </head>
@@ -409,453 +430,1755 @@
 
   <header>
     <h1>Investing RPG</h1>
-    <p>3종족 체형 대비 및 레이아웃 검증 (황금기사단 / 기계종 / 화염거인)</p>
+    <p>11종족 체형 마커 가시화 및 분파 HEX 색상 대시보드 (수평 슬라이스 완성)</p>
   </header>
 
-  <!-- Mount Point for React Compare View -->
+  <!-- Mount Point for React Grid -->
   <div id="root"></div>
 
   <script type="text/babel">
 
-    // Target Tickers AppearanceSpec JSON Data
+    // Injected specs representing JPM, NVDA, LLY, RIVN, KO, GE, XOM, FCX, SEG, NEE, META, SPY
     const portfolioSpecs = {
-      "JPM": {
-        "ticker": "JPM",
-        "race": "황금기사단",
-        "raceBodyType": "황금기사단_체형",
-        "subfaction": "은행",
-        "sectorLabel": "금융",
-        "palette": {
-          "primary": "Gold",
-          "secondary": "Bronze",
-          "accent": "Ruby"
-        },
-        "size": 0.7869,
-        "aura": 0.6293,
-        "levelTier": 4,
-        "rarityFrame": "legendary",
-        "accents": [
-          "은행_휘장",
-          "심장"
-        ],
-        "dominantStat": "HP",
-        "estimatedBadge": {
-          "enabled": true,
-          "stats": [
-            "DEF"
-          ]
-        },
-        "type": "EQUITY",
-        "stats": {
-          "HP": 789,
-          "ATK": 530,
-          "DEF": 473,
-          "SPD": 262,
-          "CRIT": 205,
-          "REGEN": 217,
-          "숙련": 633
-        },
-        "provenance": {
-          "HP": {
-            "stat": "HP",
-            "value": 789,
-            "axis": "개인화",
-            "source_metric": "shares * price",
-            "raw_value": 1555.5500000000002,
-            "sector": "Financial Services",
-            "sector_percentile": 0.7871,
-            "estimated": false,
-            "note": "Log-scaled value: 7.3496 (Portfolio Range: 4.9032 - 8.0115)",
-            "base_value": 789,
-            "lvl_mult": 1.0,
-            "final_value": 789
-          },
-          "ATK": {
-            "stat": "ATK",
-            "value": 530,
-            "axis": "종목",
-            "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
-            "raw_value": {
-              "growth": 0.127,
-              "momentum": 0.6492652157077977
-            },
-            "sector": "Financial Services",
-            "sector_percentile": 0.6039,
-            "estimated": false,
-            "note": "Growth score: 0.5844 (raw), 52-week momentum: 0.6493",
-            "base_value": 608,
-            "lvl_mult": 0.8722,
-            "final_value": 530
-          },
-          "DEF": {
-            "stat": "DEF",
-            "value": 473,
-            "axis": "종목",
-            "source_metric": "debtToEquity & currentRatio",
-            "raw_value": null,
-            "sector": "Financial Services",
-            "sector_percentile": 0.5373,
-            "estimated": true,
-            "note": "Financial services fallback. D/E and CurrentRatio missing. Used ROE quality score (0.5373) as proxy.",
-            "base_value": 542,
-            "lvl_mult": 0.8722,
-            "final_value": 473
-          },
-          "SPD": {
-            "stat": "SPD",
-            "value": 262,
-            "axis": "종목",
-            "source_metric": "beta",
-            "raw_value": 1.0,
-            "sector": "Financial Services",
-            "sector_percentile": 0.5,
-            "estimated": false,
-            "note": "Beta: 1.0000",
-            "base_value": 300,
-            "lvl_mult": 0.8722,
-            "final_value": 262
-          },
-          "CRIT": {
-            "stat": "CRIT",
-            "value": 205,
-            "axis": "종목",
-            "source_metric": "spread",
-            "raw_value": 0.2837349168284421,
-            "sector": "Financial Services",
-            "sector_percentile": 0.5,
-            "estimated": false,
-            "note": "Spread: 0.2837",
-            "base_value": 235,
-            "lvl_mult": 0.8722,
-            "final_value": 205
-          },
-          "REGEN": {
-            "stat": "REGEN",
-            "value": 217,
-            "axis": "종목",
-            "source_metric": "dividendYield",
-            "raw_value": 0.019299999999999998,
-            "sector": "Financial Services",
-            "sector_percentile": 0.2412,
-            "estimated": false,
-            "note": "Dividend yield: 1.93%",
-            "base_value": 249,
-            "lvl_mult": 0.8722,
-            "final_value": 217
-          },
-          "숙련": {
-            "stat": "숙련",
-            "value": 633,
-            "axis": "종목",
-            "source_metric": "returnOnEquity, operatingMargins, profitMargins",
-            "raw_value": {
-              "returnOnEquity": 0.16465063,
-              "operatingMargins": 0.44853,
-              "profitMargins": 0.35418
-            },
-            "sector": "Financial Services",
-            "sector_percentile": 0.7227,
-            "estimated": false,
-            "note": "Averaged: ROE_score=0.5372815955036514, OpMargin_score=0.7988981050555399, ProfitMargin_score=0.8320249635278446",
-            "base_value": 726,
-            "lvl_mult": 0.8722,
-            "final_value": 633
-          }
-        }
+  "JPM": {
+    "ticker": "JPM",
+    "race": "황금기사단",
+    "raceBodyType": "황금기사단_체형",
+    "subfaction": "은행",
+    "sectorLabel": "금융",
+    "palette": {
+      "primary": "Gold",
+      "secondary": "Bronze",
+      "accent": "Ruby"
+    },
+    "size": 0.7869,
+    "aura": 0.6293,
+    "levelTier": 4,
+    "rarityFrame": "legendary",
+    "accents": [
+      "은행_휘장",
+      "심장"
+    ],
+    "dominantStat": "HP",
+    "estimatedBadge": {
+      "enabled": true,
+      "stats": [
+        "DEF"
+      ]
+    },
+    "type": "EQUITY",
+    "stats": {
+      "HP": 789,
+      "ATK": 530,
+      "DEF": 473,
+      "SPD": 262,
+      "CRIT": 205,
+      "REGEN": 217,
+      "숙련": 633
+    },
+    "provenance": {
+      "HP": {
+        "stat": "HP",
+        "value": 789,
+        "axis": "개인화",
+        "source_metric": "shares * price",
+        "raw_value": 1555.5500000000002,
+        "sector": "Financial Services",
+        "sector_percentile": 0.7871,
+        "estimated": false,
+        "note": "Log-scaled value: 7.3496 (Portfolio Range: 4.9032 - 8.0115)",
+        "base_value": 789,
+        "lvl_mult": 1.0,
+        "final_value": 789
       },
-      "NVDA": {
-        "ticker": "NVDA",
-        "race": "기계종",
-        "raceBodyType": "기계종_체형",
-        "subfaction": "반도체",
-        "sectorLabel": "테크",
-        "palette": {
-          "primary": "Cyber_Blue",
-          "secondary": "Neon_Purple",
-          "accent": "Cyan"
+      "ATK": {
+        "stat": "ATK",
+        "value": 530,
+        "axis": "종목",
+        "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
+        "raw_value": {
+          "growth": 0.127,
+          "momentum": 0.6492652157077977
         },
-        "size": 0.8818,
-        "aura": 0.9283,
-        "levelTier": 5,
-        "rarityFrame": "legendary",
-        "accents": [
-          "반도체_휘장",
-          "지팡이"
-        ],
-        "dominantStat": "숙련",
-        "estimatedBadge": {
-          "enabled": false,
-          "stats": []
-        },
-        "type": "EQUITY",
-        "stats": {
-          "HP": 883,
-          "ATK": 916,
-          "DEF": 512,
-          "SPD": 786,
-          "CRIT": 601,
-          "REGEN": 10,
-          "숙련": 929
-        },
-        "provenance": {
-          "HP": {
-            "stat": "HP",
-            "value": 883,
-            "axis": "개인화",
-            "source_metric": "shares * price",
-            "raw_value": 2404.1,
-            "sector": "Technology",
-            "sector_percentile": 0.8821,
-            "estimated": false,
-            "note": "Log-scaled value: 7.7849 (Portfolio Range: 4.9032 - 8.0115)",
-            "base_value": 883,
-            "lvl_mult": 1.0,
-            "final_value": 883
-          },
-          "ATK": {
-            "stat": "ATK",
-            "value": 916,
-            "axis": "종목",
-            "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
-            "raw_value": {
-              "growth": 0.44262295,
-              "momentum": 0.8703703666014498
-            },
-            "sector": "Technology",
-            "sector_percentile": 0.9161,
-            "estimated": false,
-            "note": "Growth score: 0.8852 (raw), 52-week momentum: 0.8704",
-            "base_value": 916,
-            "lvl_mult": 1.0,
-            "final_value": 916
-          },
-          "DEF": {
-            "stat": "DEF",
-            "value": 512,
-            "axis": "종목",
-            "source_metric": "debtToEquity & currentRatio",
-            "raw_value": {
-              "debtToEquity_raw": 31.905,
-              "currentRatio_raw": 3.534
-            },
-            "sector": "Technology",
-            "sector_percentile": 0.512,
-            "estimated": false,
-            "note": "Averaged: D/E score = 0.6974, CurrentRatio score = 0.3267",
-            "base_value": 512,
-            "lvl_mult": 1.0,
-            "final_value": 512
-          },
-          "SPD": {
-            "stat": "SPD",
-            "value": 786,
-            "axis": "종목",
-            "source_metric": "beta",
-            "raw_value": 2.022,
-            "sector": "Technology",
-            "sector_percentile": 0.7838,
-            "estimated": false,
-            "note": "Beta: 2.0220",
-            "base_value": 786,
-            "lvl_mult": 1.0,
-            "final_value": 786
-          },
-          "CRIT": {
-            "stat": "CRIT",
-            "value": 601,
-            "axis": "종목",
-            "source_metric": "spread",
-            "raw_value": 0.7423223067883296,
-            "sector": "Technology",
-            "sector_percentile": 0.601,
-            "estimated": false,
-            "note": "Spread: 0.7423",
-            "base_value": 601,
-            "lvl_mult": 1.0,
-            "final_value": 601
-          },
-          "REGEN": {
-            "stat": "REGEN",
-            "value": 10,
-            "axis": "종목",
-            "source_metric": "dividendYield",
-            "raw_value": 0.0003,
-            "sector": "Technology",
-            "sector_percentile": 0.0,
-            "estimated": false,
-            "note": "Dividend yield: 0.03%",
-            "base_value": 10,
-            "lvl_mult": 1.0,
-            "final_value": 10
-          },
-          "숙련": {
-            "stat": "숙련",
-            "value": 929,
-            "axis": "종목",
-            "source_metric": "returnOnEquity, operatingMargins, profitMargins",
-            "raw_value": {
-              "returnOnEquity": 1.228514,
-              "operatingMargins": 0.62002,
-              "profitMargins": 0.55318
-            },
-            "sector": "Technology",
-            "sector_percentile": 0.9283,
-            "estimated": false,
-            "note": "Averaged: ROE_score=1.0, OpMargin_score=0.8929729864294473, ProfitMargin_score=0.8920194645228509",
-            "base_value": 929,
-            "lvl_mult": 1.0,
-            "final_value": 929
-          }
-        }
+        "sector": "Financial Services",
+        "sector_percentile": 0.6039,
+        "estimated": false,
+        "note": "Growth score: 0.5844 (raw), 52-week momentum: 0.6493",
+        "base_value": 608,
+        "lvl_mult": 0.8722,
+        "final_value": 530
       },
-      "XOM": {
-        "ticker": "XOM",
-        "race": "화염거인",
-        "raceBodyType": "화염거인_체형",
-        "subfaction": "에너지 E&P",
-        "sectorLabel": "에너지",
-        "palette": {
-          "primary": "Crimson",
-          "secondary": "Charcoal",
-          "accent": "Fire"
+      "DEF": {
+        "stat": "DEF",
+        "value": 473,
+        "axis": "종목",
+        "source_metric": "debtToEquity & currentRatio",
+        "raw_value": null,
+        "sector": "Financial Services",
+        "sector_percentile": 0.5373,
+        "estimated": true,
+        "note": "Financial services fallback. D/E and CurrentRatio missing. Used ROE quality score (0.5373) as proxy.",
+        "base_value": 542,
+        "lvl_mult": 0.8722,
+        "final_value": 473
+      },
+      "SPD": {
+        "stat": "SPD",
+        "value": 262,
+        "axis": "종목",
+        "source_metric": "beta",
+        "raw_value": 1.0,
+        "sector": "Financial Services",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Beta: 1.0000",
+        "base_value": 300,
+        "lvl_mult": 0.8722,
+        "final_value": 262
+      },
+      "CRIT": {
+        "stat": "CRIT",
+        "value": 205,
+        "axis": "종목",
+        "source_metric": "spread",
+        "raw_value": 0.2837349168284421,
+        "sector": "Financial Services",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Spread: 0.2837",
+        "base_value": 235,
+        "lvl_mult": 0.8722,
+        "final_value": 205
+      },
+      "REGEN": {
+        "stat": "REGEN",
+        "value": 217,
+        "axis": "종목",
+        "source_metric": "dividendYield",
+        "raw_value": 0.019299999999999998,
+        "sector": "Financial Services",
+        "sector_percentile": 0.2412,
+        "estimated": false,
+        "note": "Dividend yield: 1.93%",
+        "base_value": 249,
+        "lvl_mult": 0.8722,
+        "final_value": 217
+      },
+      "숙련": {
+        "stat": "숙련",
+        "value": 633,
+        "axis": "종목",
+        "source_metric": "returnOnEquity, operatingMargins, profitMargins",
+        "raw_value": {
+          "returnOnEquity": 0.16465063,
+          "operatingMargins": 0.44853,
+          "profitMargins": 0.35418
         },
-        "size": 0.8374,
-        "aura": 0.201,
-        "levelTier": 5,
-        "rarityFrame": "legendary",
-        "accents": [
-          "에너지 E&P_휘장",
-          "심장"
-        ],
-        "dominantStat": "HP",
-        "estimatedBadge": {
-          "enabled": false,
-          "stats": []
-        },
-        "type": "EQUITY",
-        "stats": {
-          "HP": 839,
-          "ATK": 465,
-          "DEF": 626,
-          "SPD": 48,
-          "CRIT": 427,
-          "REGEN": 311,
-          "숙련": 209
-        },
-        "provenance": {
-          "HP": {
-            "stat": "HP",
-            "value": 839,
-            "axis": "개인화",
-            "source_metric": "shares * price",
-            "raw_value": 1821.0,
-            "sector": "Energy",
-            "sector_percentile": 0.8377,
-            "estimated": false,
-            "note": "Log-scaled value: 7.5071 (Portfolio Range: 4.9032 - 8.0115)",
-            "base_value": 839,
-            "lvl_mult": 1.0,
-            "final_value": 839
-          },
-          "ATK": {
-            "stat": "ATK",
-            "value": 465,
-            "axis": "종목",
-            "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
-            "raw_value": {
-              "growth": 0.026,
-              "momentum": 0.6520880361173815
-            },
-            "sector": "Energy",
-            "sector_percentile": 0.5098,
-            "estimated": false,
-            "note": "Growth score: 0.4488 (raw), 52-week momentum: 0.6521",
-            "base_value": 515,
-            "lvl_mult": 0.9026,
-            "final_value": 465
-          },
-          "DEF": {
-            "stat": "DEF",
-            "value": 626,
-            "axis": "종목",
-            "source_metric": "debtToEquity & currentRatio",
-            "raw_value": {
-              "debtToEquity_raw": 18.261,
-              "currentRatio_raw": 1.036
-            },
-            "sector": "Energy",
-            "sector_percentile": 0.6903,
-            "estimated": false,
-            "note": "Averaged: D/E score = 0.9468, CurrentRatio score = 0.4338",
-            "base_value": 693,
-            "lvl_mult": 0.9026,
-            "final_value": 626
-          },
-          "SPD": {
-            "stat": "SPD",
-            "value": 48,
-            "axis": "종목",
-            "source_metric": "beta",
-            "raw_value": 0.149,
-            "sector": "Energy",
-            "sector_percentile": 0.5,
-            "estimated": false,
-            "note": "Beta: 0.1490",
-            "base_value": 53,
-            "lvl_mult": 0.9026,
-            "final_value": 48
-          },
-          "CRIT": {
-            "stat": "CRIT",
-            "value": 427,
-            "axis": "종목",
-            "source_metric": "spread",
-            "raw_value": 0.671657348621245,
-            "sector": "Energy",
-            "sector_percentile": 0.5,
-            "estimated": false,
-            "note": "Spread: 0.6717",
-            "base_value": 473,
-            "lvl_mult": 0.9026,
-            "final_value": 427
-          },
-          "REGEN": {
-            "stat": "REGEN",
-            "value": 311,
-            "axis": "종목",
-            "source_metric": "dividendYield",
-            "raw_value": 0.0271,
-            "sector": "Energy",
-            "sector_percentile": 0.3387,
-            "estimated": false,
-            "note": "Dividend yield: 2.71%",
-            "base_value": 345,
-            "lvl_mult": 0.9026,
-            "final_value": 311
-          },
-          "숙련": {
-            "stat": "숙련",
-            "value": 209,
-            "axis": "종목",
-            "source_metric": "returnOnEquity, operatingMargins, profitMargins",
-            "raw_value": {
-              "returnOnEquity": 0.09873,
-              "operatingMargins": 0.06355,
-              "profitMargins": 0.077649996
-            },
-            "sector": "Energy",
-            "sector_percentile": 0.2239,
-            "estimated": false,
-            "note": "Averaged: ROE_score=0.2515222305009098, OpMargin_score=0.12475355969331872, ProfitMargin_score=0.2953383953384132",
-            "base_value": 232,
-            "lvl_mult": 0.9026,
-            "final_value": 209
-          }
-        }
+        "sector": "Financial Services",
+        "sector_percentile": 0.7227,
+        "estimated": false,
+        "note": "Averaged: ROE_score=0.5372815955036514, OpMargin_score=0.7988981050555399, ProfitMargin_score=0.8320249635278446",
+        "base_value": 726,
+        "lvl_mult": 0.8722,
+        "final_value": 633
       }
-    };
+    }
+  },
+  "NVDA": {
+    "ticker": "NVDA",
+    "race": "기계종",
+    "raceBodyType": "기계종_체형",
+    "subfaction": "반도체",
+    "sectorLabel": "테크",
+    "palette": {
+      "primary": "Cyber_Blue",
+      "secondary": "Neon_Purple",
+      "accent": "Cyan"
+    },
+    "size": 0.8818,
+    "aura": 0.9283,
+    "levelTier": 5,
+    "rarityFrame": "legendary",
+    "accents": [
+      "반도체_휘장",
+      "지팡이"
+    ],
+    "dominantStat": "숙련",
+    "estimatedBadge": {
+      "enabled": false,
+      "stats": []
+    },
+    "type": "EQUITY",
+    "stats": {
+      "HP": 883,
+      "ATK": 916,
+      "DEF": 512,
+      "SPD": 786,
+      "CRIT": 601,
+      "REGEN": 10,
+      "숙련": 929
+    },
+    "provenance": {
+      "HP": {
+        "stat": "HP",
+        "value": 883,
+        "axis": "개인화",
+        "source_metric": "shares * price",
+        "raw_value": 2404.1,
+        "sector": "Technology",
+        "sector_percentile": 0.8821,
+        "estimated": false,
+        "note": "Log-scaled value: 7.7849 (Portfolio Range: 4.9032 - 8.0115)",
+        "base_value": 883,
+        "lvl_mult": 1.0,
+        "final_value": 883
+      },
+      "ATK": {
+        "stat": "ATK",
+        "value": 916,
+        "axis": "종목",
+        "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
+        "raw_value": {
+          "growth": 0.44262295,
+          "momentum": 0.8703703666014498
+        },
+        "sector": "Technology",
+        "sector_percentile": 0.9161,
+        "estimated": false,
+        "note": "Growth score: 0.8852 (raw), 52-week momentum: 0.8704",
+        "base_value": 916,
+        "lvl_mult": 1.0,
+        "final_value": 916
+      },
+      "DEF": {
+        "stat": "DEF",
+        "value": 512,
+        "axis": "종목",
+        "source_metric": "debtToEquity & currentRatio",
+        "raw_value": {
+          "debtToEquity_raw": 31.905,
+          "currentRatio_raw": 3.534
+        },
+        "sector": "Technology",
+        "sector_percentile": 0.512,
+        "estimated": false,
+        "note": "Averaged: D/E score = 0.6974, CurrentRatio score = 0.3267",
+        "base_value": 512,
+        "lvl_mult": 1.0,
+        "final_value": 512
+      },
+      "SPD": {
+        "stat": "SPD",
+        "value": 786,
+        "axis": "종목",
+        "source_metric": "beta",
+        "raw_value": 2.022,
+        "sector": "Technology",
+        "sector_percentile": 0.7838,
+        "estimated": false,
+        "note": "Beta: 2.0220",
+        "base_value": 786,
+        "lvl_mult": 1.0,
+        "final_value": 786
+      },
+      "CRIT": {
+        "stat": "CRIT",
+        "value": 601,
+        "axis": "종목",
+        "source_metric": "spread",
+        "raw_value": 0.7423223067883296,
+        "sector": "Technology",
+        "sector_percentile": 0.601,
+        "estimated": false,
+        "note": "Spread: 0.7423",
+        "base_value": 601,
+        "lvl_mult": 1.0,
+        "final_value": 601
+      },
+      "REGEN": {
+        "stat": "REGEN",
+        "value": 10,
+        "axis": "종목",
+        "source_metric": "dividendYield",
+        "raw_value": 0.0003,
+        "sector": "Technology",
+        "sector_percentile": 0.0,
+        "estimated": false,
+        "note": "Dividend yield: 0.03%",
+        "base_value": 10,
+        "lvl_mult": 1.0,
+        "final_value": 10
+      },
+      "숙련": {
+        "stat": "숙련",
+        "value": 929,
+        "axis": "종목",
+        "source_metric": "returnOnEquity, operatingMargins, profitMargins",
+        "raw_value": {
+          "returnOnEquity": 1.228514,
+          "operatingMargins": 0.62002,
+          "profitMargins": 0.55318
+        },
+        "sector": "Technology",
+        "sector_percentile": 0.9283,
+        "estimated": false,
+        "note": "Averaged: ROE_score=1.0, OpMargin_score=0.8929729864294473, ProfitMargin_score=0.8920194645228509",
+        "base_value": 929,
+        "lvl_mult": 1.0,
+        "final_value": 929
+      }
+    }
+  },
+  "LLY": {
+    "ticker": "LLY",
+    "race": "생명교단",
+    "raceBodyType": "생명교단_체형",
+    "subfaction": "제약",
+    "sectorLabel": "헬스케어",
+    "palette": {
+      "primary": "Forest_Green",
+      "secondary": "Silver",
+      "accent": "Emerald"
+    },
+    "size": 0.518,
+    "aura": 0.9634,
+    "levelTier": 4,
+    "rarityFrame": "legendary",
+    "accents": [
+      "제약_휘장",
+      "심장"
+    ],
+    "dominantStat": "HP",
+    "estimatedBadge": {
+      "enabled": false,
+      "stats": []
+    },
+    "type": "EQUITY",
+    "stats": {
+      "HP": 523,
+      "ATK": 376,
+      "DEF": 509,
+      "SPD": 218,
+      "CRIT": 418,
+      "REGEN": 55,
+      "숙련": 964
+    },
+    "provenance": {
+      "HP": {
+        "stat": "HP",
+        "value": 523,
+        "axis": "개인화",
+        "source_metric": "shares * price",
+        "raw_value": 737.525,
+        "sector": "Healthcare",
+        "sector_percentile": 0.518,
+        "estimated": false,
+        "note": "Log-scaled value: 6.6033 (Portfolio Range: 4.9032 - 8.0115)",
+        "base_value": 523,
+        "lvl_mult": 1.0,
+        "final_value": 523
+      },
+      "ATK": {
+        "stat": "ATK",
+        "value": 376,
+        "axis": "종목",
+        "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
+        "raw_value": {
+          "growth": 0.166,
+          "momentum": 0.8123223067883296
+        },
+        "sector": "Healthcare",
+        "sector_percentile": 0.5367,
+        "estimated": false,
+        "note": "Growth score: 0.4426 (raw), 52-week momentum: 0.8123",
+        "base_value": 541,
+        "lvl_mult": 0.6946,
+        "final_value": 376
+      },
+      "DEF": {
+        "stat": "DEF",
+        "value": 509,
+        "axis": "종목",
+        "source_metric": "debtToEquity & currentRatio",
+        "raw_value": {
+          "debtToEquity_raw": 142.339,
+          "currentRatio_raw": 0.906
+        },
+        "sector": "Healthcare",
+        "sector_percentile": 0.7275,
+        "estimated": false,
+        "note": "Averaged: D/E score = 0.4496, CurrentRatio score = 1.0",
+        "base_value": 732,
+        "lvl_mult": 0.6946,
+        "final_value": 509
+      },
+      "SPD": {
+        "stat": "SPD",
+        "value": 218,
+        "axis": "종목",
+        "source_metric": "beta",
+        "raw_value": 0.842,
+        "sector": "Healthcare",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Beta: 0.8420",
+        "base_value": 314,
+        "lvl_mult": 0.6946,
+        "final_value": 218
+      },
+      "CRIT": {
+        "stat": "CRIT",
+        "value": 418,
+        "axis": "종목",
+        "source_metric": "spread",
+        "raw_value": 0.6433223067883296,
+        "sector": "Healthcare",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Spread: 0.6433",
+        "base_value": 602,
+        "lvl_mult": 0.6946,
+        "final_value": 418
+      },
+      "REGEN": {
+        "stat": "REGEN",
+        "value": 55,
+        "axis": "종목",
+        "source_metric": "dividendYield",
+        "raw_value": 0.0035,
+        "sector": "Healthcare",
+        "sector_percentile": 0.0437,
+        "estimated": false,
+        "note": "Dividend yield: 0.35%",
+        "base_value": 80,
+        "lvl_mult": 0.6946,
+        "final_value": 55
+      },
+      "숙련": {
+        "stat": "숙련",
+        "value": 964,
+        "axis": "종목",
+        "source_metric": "returnOnEquity, operatingMargins, profitMargins",
+        "raw_value": {
+          "returnOnEquity": 0.43372002,
+          "operatingMargins": 0.32002,
+          "profitMargins": 0.252002
+        },
+        "sector": "Healthcare",
+        "sector_percentile": 0.9634,
+        "estimated": false,
+        "note": "Averaged: ROE_score=0.8928283758676026, OpMargin_score=1.0, ProfitMargin_score=0.9972322305009098",
+        "base_value": 1000,
+        "lvl_mult": 0.9634,
+        "final_value": 964
+      }
+    }
+  },
+  "RIVN": {
+    "ticker": "RIVN",
+    "race": "유랑상단",
+    "raceBodyType": "유랑상단_체형",
+    "subfaction": "자동차",
+    "sectorLabel": "경기소비재",
+    "palette": {
+      "primary": "Orange",
+      "secondary": "Brown",
+      "accent": "Amber"
+    },
+    "size": 0.0,
+    "aura": 0.0,
+    "levelTier": 1,
+    "rarityFrame": "epic",
+    "accents": [
+      "자동차_휘장",
+      "안대"
+    ],
+    "dominantStat": "CRIT",
+    "estimatedBadge": {
+      "enabled": false,
+      "stats": []
+    },
+    "type": "EQUITY",
+    "stats": {
+      "HP": 10,
+      "ATK": 218,
+      "DEF": 237,
+      "SPD": 236,
+      "CRIT": 247,
+      "REGEN": 10,
+      "숙련": 10
+    },
+    "provenance": {
+      "HP": {
+        "stat": "HP",
+        "value": 10,
+        "axis": "개인화",
+        "source_metric": "shares * price",
+        "raw_value": 134.72,
+        "sector": "Consumer Cyclical",
+        "sector_percentile": 0.0,
+        "estimated": false,
+        "note": "Log-scaled value: 4.9032 (Portfolio Range: 4.9032 - 8.0115)",
+        "base_value": 10,
+        "lvl_mult": 1.0,
+        "final_value": 10
+      },
+      "ATK": {
+        "stat": "ATK",
+        "value": 218,
+        "axis": "종목",
+        "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
+        "raw_value": {
+          "growth": 0.114,
+          "momentum": 0.47391851214049873
+        },
+        "sector": "Consumer Cyclical",
+        "sector_percentile": 0.5416,
+        "estimated": false,
+        "note": "Growth score: 0.5706 (raw), 52-week momentum: 0.4739",
+        "base_value": 546,
+        "lvl_mult": 0.4,
+        "final_value": 218
+      },
+      "DEF": {
+        "stat": "DEF",
+        "value": 237,
+        "axis": "종목",
+        "source_metric": "debtToEquity & currentRatio",
+        "raw_value": {
+          "debtToEquity_raw": 118.151,
+          "currentRatio_raw": 3.534
+        },
+        "sector": "Consumer Cyclical",
+        "sector_percentile": 0.5889,
+        "estimated": false,
+        "note": "Averaged: D/E score = 0.5137, CurrentRatio score = 0.6641",
+        "base_value": 593,
+        "lvl_mult": 0.4,
+        "final_value": 237
+      },
+      "SPD": {
+        "stat": "SPD",
+        "value": 236,
+        "axis": "종목",
+        "source_metric": "beta",
+        "raw_value": 1.624,
+        "sector": "Consumer Cyclical",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Beta: 1.6240",
+        "base_value": 591,
+        "lvl_mult": 0.4,
+        "final_value": 236
+      },
+      "CRIT": {
+        "stat": "CRIT",
+        "value": 247,
+        "axis": "종목",
+        "source_metric": "spread",
+        "raw_value": 0.9611063094209162,
+        "sector": "Consumer Cyclical",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Spread: 0.9611",
+        "base_value": 617,
+        "lvl_mult": 0.4,
+        "final_value": 247
+      },
+      "REGEN": {
+        "stat": "REGEN",
+        "value": 10,
+        "axis": "종목",
+        "source_metric": "dividendYield",
+        "raw_value": 0.0,
+        "sector": "Consumer Cyclical",
+        "sector_percentile": 0.0,
+        "estimated": false,
+        "note": "No dividend yield",
+        "base_value": 10,
+        "lvl_mult": 0.4,
+        "final_value": 10
+      },
+      "숙련": {
+        "stat": "숙련",
+        "value": 10,
+        "axis": "종목",
+        "source_metric": "returnOnEquity, operatingMargins, profitMargins",
+        "raw_value": {
+          "returnOnEquity": -0.65691,
+          "operatingMargins": -0.55318,
+          "profitMargins": -0.4426
+        },
+        "sector": "Consumer Cyclical",
+        "sector_percentile": 0.0,
+        "estimated": false,
+        "note": "Averaged: ROE_score=0.0, OpMargin_score=0.0, ProfitMargin_score=0.0",
+        "base_value": 10,
+        "lvl_mult": 0.4,
+        "final_value": 10
+      }
+    }
+  },
+  "KO": {
+    "ticker": "KO",
+    "race": "곡물수호자",
+    "raceBodyType": "곡물수호자_체형",
+    "subfaction": "식음료",
+    "sectorLabel": "필수소비재",
+    "palette": {
+      "primary": "Brown",
+      "secondary": "Tan",
+      "accent": "Wheat"
+    },
+    "size": 0.702,
+    "aura": 0.7899,
+    "levelTier": 4,
+    "rarityFrame": "legendary",
+    "accents": [
+      "식음료_휘장",
+      "지팡이"
+    ],
+    "dominantStat": "숙련",
+    "estimatedBadge": {
+      "enabled": false,
+      "stats": []
+    },
+    "type": "EQUITY",
+    "stats": {
+      "HP": 705,
+      "ATK": 374,
+      "DEF": 535,
+      "SPD": 93,
+      "CRIT": 182,
+      "REGEN": 279,
+      "숙련": 792
+    },
+    "provenance": {
+      "HP": {
+        "stat": "HP",
+        "value": 705,
+        "axis": "개인화",
+        "source_metric": "shares * price",
+        "raw_value": 1007.85,
+        "sector": "Consumer Defensive",
+        "sector_percentile": 0.702,
+        "estimated": false,
+        "note": "Log-scaled value: 6.9156 (Portfolio Range: 4.9032 - 8.0115)",
+        "base_value": 705,
+        "lvl_mult": 1.0,
+        "final_value": 705
+      },
+      "ATK": {
+        "stat": "ATK",
+        "value": 374,
+        "axis": "종목",
+        "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
+        "raw_value": {
+          "growth": 0.127,
+          "momentum": 0.6520880361173815
+        },
+        "sector": "Consumer Defensive",
+        "sector_percentile": 0.5501,
+        "estimated": false,
+        "note": "Growth score: 0.5844 (raw), 52-week momentum: 0.6521",
+        "base_value": 455,
+        "lvl_mult": 0.821,
+        "final_value": 374
+      },
+      "DEF": {
+        "stat": "DEF",
+        "value": 535,
+        "axis": "종목",
+        "source_metric": "debtToEquity & currentRatio",
+        "raw_value": {
+          "debtToEquity_raw": 142.339,
+          "currentRatio_raw": 1.036
+        },
+        "sector": "Consumer Defensive",
+        "sector_percentile": 0.6515,
+        "estimated": false,
+        "note": "Averaged: D/E score = 0.4496, CurrentRatio score = 0.8533",
+        "base_value": 651,
+        "lvl_mult": 0.821,
+        "final_value": 535
+      },
+      "SPD": {
+        "stat": "SPD",
+        "value": 93,
+        "axis": "종목",
+        "source_metric": "beta",
+        "raw_value": 0.354,
+        "sector": "Consumer Defensive",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Beta: 0.3540",
+        "base_value": 113,
+        "lvl_mult": 0.821,
+        "final_value": 93
+      },
+      "CRIT": {
+        "stat": "CRIT",
+        "value": 182,
+        "axis": "종목",
+        "source_metric": "spread",
+        "raw_value": 0.26488140780413166,
+        "sector": "Consumer Defensive",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Spread: 0.2649",
+        "base_value": 222,
+        "lvl_mult": 0.821,
+        "final_value": 182
+      },
+      "REGEN": {
+        "stat": "REGEN",
+        "value": 279,
+        "axis": "종목",
+        "source_metric": "dividendYield",
+        "raw_value": 0.026699999999999998,
+        "sector": "Consumer Defensive",
+        "sector_percentile": 0.3337,
+        "estimated": false,
+        "note": "Dividend yield: 2.67%",
+        "base_value": 340,
+        "lvl_mult": 0.821,
+        "final_value": 279
+      },
+      "숙련": {
+        "stat": "숙련",
+        "value": 792,
+        "axis": "종목",
+        "source_metric": "returnOnEquity, operatingMargins, profitMargins",
+        "raw_value": {
+          "returnOnEquity": 0.43372002,
+          "operatingMargins": 0.35055,
+          "profitMargins": 0.278
+        },
+        "sector": "Consumer Defensive",
+        "sector_percentile": 0.9643,
+        "estimated": false,
+        "note": "Averaged: ROE_score=0.8928283758676026, OpMargin_score=1.0, ProfitMargin_score=1.0",
+        "base_value": 965,
+        "lvl_mult": 0.821,
+        "final_value": 792
+      }
+    }
+  },
+  "GE": {
+    "ticker": "GE",
+    "race": "강철공방",
+    "raceBodyType": "강철공방_체형",
+    "subfaction": "기타",
+    "sectorLabel": "산업재",
+    "palette": {
+      "primary": "Steel_Gray",
+      "secondary": "Iron",
+      "accent": "Rust"
+    },
+    "size": 0.7073,
+    "aura": 0.7838,
+    "levelTier": 4,
+    "rarityFrame": "legendary",
+    "accents": [
+      "기타_휘장",
+      "심장"
+    ],
+    "dominantStat": "HP",
+    "estimatedBadge": {
+      "enabled": false,
+      "stats": []
+    },
+    "type": "EQUITY",
+    "stats": {
+      "HP": 710,
+      "ATK": 427,
+      "DEF": 560,
+      "SPD": 234,
+      "CRIT": 307,
+      "REGEN": 48,
+      "숙련": 605
+    },
+    "provenance": {
+      "HP": {
+        "stat": "HP",
+        "value": 710,
+        "axis": "개인화",
+        "source_metric": "shares * price",
+        "raw_value": 1029.0,
+        "sector": "Industrials",
+        "sector_percentile": 0.7074,
+        "estimated": false,
+        "note": "Log-scaled value: 6.9363 (Portfolio Range: 4.9032 - 8.0115)",
+        "base_value": 710,
+        "lvl_mult": 1.0,
+        "final_value": 710
+      },
+      "ATK": {
+        "stat": "ATK",
+        "value": 427,
+        "axis": "종목",
+        "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
+        "raw_value": {
+          "growth": 0.127,
+          "momentum": 0.7423223067883296
+        },
+        "sector": "Industrials",
+        "sector_percentile": 0.5785,
+        "estimated": false,
+        "note": "Growth score: 0.5844 (raw), 52-week momentum: 0.7423",
+        "base_value": 583,
+        "lvl_mult": 0.7327,
+        "final_value": 427
+      },
+      "DEF": {
+        "stat": "DEF",
+        "value": 560,
+        "axis": "종목",
+        "source_metric": "debtToEquity & currentRatio",
+        "raw_value": {
+          "debtToEquity_raw": 31.905,
+          "currentRatio_raw": 1.821
+        },
+        "sector": "Industrials",
+        "sector_percentile": 0.7645,
+        "estimated": false,
+        "note": "Averaged: D/E score = 0.6974, CurrentRatio score = 0.8315",
+        "base_value": 764,
+        "lvl_mult": 0.7327,
+        "final_value": 560
+      },
+      "SPD": {
+        "stat": "SPD",
+        "value": 234,
+        "axis": "종목",
+        "source_metric": "beta",
+        "raw_value": 1.086,
+        "sector": "Industrials",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Beta: 1.0860",
+        "base_value": 319,
+        "lvl_mult": 0.7327,
+        "final_value": 234
+      },
+      "CRIT": {
+        "stat": "CRIT",
+        "value": 307,
+        "axis": "종목",
+        "source_metric": "spread",
+        "raw_value": 0.6271082175629261,
+        "sector": "Industrials",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Spread: 0.6271",
+        "base_value": 419,
+        "lvl_mult": 0.7327,
+        "final_value": 307
+      },
+      "REGEN": {
+        "stat": "REGEN",
+        "value": 48,
+        "axis": "종목",
+        "source_metric": "dividendYield",
+        "raw_value": 0.0034,
+        "sector": "Industrials",
+        "sector_percentile": 0.0425,
+        "estimated": false,
+        "note": "Dividend yield: 0.34%",
+        "base_value": 65,
+        "lvl_mult": 0.7327,
+        "final_value": 48
+      },
+      "숙련": {
+        "stat": "숙련",
+        "value": 605,
+        "axis": "종목",
+        "source_metric": "returnOnEquity, operatingMargins, profitMargins",
+        "raw_value": {
+          "returnOnEquity": 0.16465063,
+          "operatingMargins": 0.35055,
+          "profitMargins": 0.278
+        },
+        "sector": "Industrials",
+        "sector_percentile": 0.8256,
+        "estimated": false,
+        "note": "Averaged: ROE_score=0.5372815955036514, OpMargin_score=1.0, ProfitMargin_score=1.0",
+        "base_value": 825,
+        "lvl_mult": 0.7327,
+        "final_value": 605
+      }
+    }
+  },
+  "XOM": {
+    "ticker": "XOM",
+    "race": "화염거인",
+    "raceBodyType": "화염거인_체형",
+    "subfaction": "에너지 E&P",
+    "sectorLabel": "에너지",
+    "palette": {
+      "primary": "Crimson",
+      "secondary": "Charcoal",
+      "accent": "Fire"
+    },
+    "size": 0.8374,
+    "aura": 0.201,
+    "levelTier": 5,
+    "rarityFrame": "legendary",
+    "accents": [
+      "에너지 E&P_휘장",
+      "심장"
+    ],
+    "dominantStat": "HP",
+    "estimatedBadge": {
+      "enabled": false,
+      "stats": []
+    },
+    "type": "EQUITY",
+    "stats": {
+      "HP": 839,
+      "ATK": 465,
+      "DEF": 626,
+      "SPD": 48,
+      "CRIT": 427,
+      "REGEN": 311,
+      "숙련": 209
+    },
+    "provenance": {
+      "HP": {
+        "stat": "HP",
+        "value": 839,
+        "axis": "개인화",
+        "source_metric": "shares * price",
+        "raw_value": 1821.0,
+        "sector": "Energy",
+        "sector_percentile": 0.8377,
+        "estimated": false,
+        "note": "Log-scaled value: 7.5071 (Portfolio Range: 4.9032 - 8.0115)",
+        "base_value": 839,
+        "lvl_mult": 1.0,
+        "final_value": 839
+      },
+      "ATK": {
+        "stat": "ATK",
+        "value": 465,
+        "axis": "종목",
+        "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
+        "raw_value": {
+          "growth": 0.026,
+          "momentum": 0.6520880361173815
+        },
+        "sector": "Energy",
+        "sector_percentile": 0.5098,
+        "estimated": false,
+        "note": "Growth score: 0.4488 (raw), 52-week momentum: 0.6521",
+        "base_value": 515,
+        "lvl_mult": 0.9026,
+        "final_value": 465
+      },
+      "DEF": {
+        "stat": "DEF",
+        "value": 626,
+        "axis": "종목",
+        "source_metric": "debtToEquity & currentRatio",
+        "raw_value": {
+          "debtToEquity_raw": 18.261,
+          "currentRatio_raw": 1.036
+        },
+        "sector": "Energy",
+        "sector_percentile": 0.6903,
+        "estimated": false,
+        "note": "Averaged: D/E score = 0.9468, CurrentRatio score = 0.4338",
+        "base_value": 693,
+        "lvl_mult": 0.9026,
+        "final_value": 626
+      },
+      "SPD": {
+        "stat": "SPD",
+        "value": 48,
+        "axis": "종목",
+        "source_metric": "beta",
+        "raw_value": 0.149,
+        "sector": "Energy",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Beta: 0.1490",
+        "base_value": 53,
+        "lvl_mult": 0.9026,
+        "final_value": 48
+      },
+      "CRIT": {
+        "stat": "CRIT",
+        "value": 427,
+        "axis": "종목",
+        "source_metric": "spread",
+        "raw_value": 0.671657348621245,
+        "sector": "Energy",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Spread: 0.6717",
+        "base_value": 473,
+        "lvl_mult": 0.9026,
+        "final_value": 427
+      },
+      "REGEN": {
+        "stat": "REGEN",
+        "value": 311,
+        "axis": "종목",
+        "source_metric": "dividendYield",
+        "raw_value": 0.0271,
+        "sector": "Energy",
+        "sector_percentile": 0.3387,
+        "estimated": false,
+        "note": "Dividend yield: 2.71%",
+        "base_value": 345,
+        "lvl_mult": 0.9026,
+        "final_value": 311
+      },
+      "숙련": {
+        "stat": "숙련",
+        "value": 209,
+        "axis": "종목",
+        "source_metric": "returnOnEquity, operatingMargins, profitMargins",
+        "raw_value": {
+          "returnOnEquity": 0.09873,
+          "operatingMargins": 0.06355,
+          "profitMargins": 0.077649996
+        },
+        "sector": "Energy",
+        "sector_percentile": 0.2239,
+        "estimated": false,
+        "note": "Averaged: ROE_score=0.2515222305009098, OpMargin_score=0.12475355969331872, ProfitMargin_score=0.2953383953384132",
+        "base_value": 232,
+        "lvl_mult": 0.9026,
+        "final_value": 209
+      }
+    }
+  },
+  "FCX": {
+    "ticker": "FCX",
+    "race": "광맥족",
+    "raceBodyType": "광맥족_체형",
+    "subfaction": "광물자원",
+    "sectorLabel": "소재",
+    "palette": {
+      "primary": "Earth_Brown",
+      "secondary": "Stone",
+      "accent": "Topaz"
+    },
+    "size": 0.7027,
+    "aura": 0.7838,
+    "levelTier": 4,
+    "rarityFrame": "epic",
+    "accents": [
+      "광물자원_휘장",
+      "심장"
+    ],
+    "dominantStat": "HP",
+    "estimatedBadge": {
+      "enabled": false,
+      "stats": []
+    },
+    "type": "EQUITY",
+    "stats": {
+      "HP": 706,
+      "ATK": 427,
+      "DEF": 560,
+      "SPD": 234,
+      "CRIT": 307,
+      "REGEN": 48,
+      "숙련": 605
+    },
+    "provenance": {
+      "HP": {
+        "stat": "HP",
+        "value": 706,
+        "axis": "개인화",
+        "source_metric": "shares * price",
+        "raw_value": 1012.32,
+        "sector": "Basic Materials",
+        "sector_percentile": 0.7028,
+        "estimated": false,
+        "note": "Log-scaled value: 6.9200 (Portfolio Range: 4.9032 - 8.0115)",
+        "base_value": 706,
+        "lvl_mult": 1.0,
+        "final_value": 706
+      },
+      "ATK": {
+        "stat": "ATK",
+        "value": 427,
+        "axis": "종목",
+        "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
+        "raw_value": {
+          "growth": 0.127,
+          "momentum": 0.7423223067883296
+        },
+        "sector": "Basic Materials",
+        "sector_percentile": 0.5785,
+        "estimated": false,
+        "note": "Growth score: 0.5844 (raw), 52-week momentum: 0.7423",
+        "base_value": 583,
+        "lvl_mult": 0.7327,
+        "final_value": 427
+      },
+      "DEF": {
+        "stat": "DEF",
+        "value": 560,
+        "axis": "종목",
+        "source_metric": "debtToEquity & currentRatio",
+        "raw_value": {
+          "debtToEquity_raw": 31.905,
+          "currentRatio_raw": 1.821
+        },
+        "sector": "Basic Materials",
+        "sector_percentile": 0.7645,
+        "estimated": false,
+        "note": "Averaged: D/E score = 0.6974, CurrentRatio score = 0.8315",
+        "base_value": 764,
+        "lvl_mult": 0.7327,
+        "final_value": 560
+      },
+      "SPD": {
+        "stat": "SPD",
+        "value": 234,
+        "axis": "종목",
+        "source_metric": "beta",
+        "raw_value": 1.086,
+        "sector": "Basic Materials",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Beta: 1.0860",
+        "base_value": 319,
+        "lvl_mult": 0.7327,
+        "final_value": 234
+      },
+      "CRIT": {
+        "stat": "CRIT",
+        "value": 307,
+        "axis": "종목",
+        "source_metric": "spread",
+        "raw_value": 0.6271082175629261,
+        "sector": "Basic Materials",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Spread: 0.6271",
+        "base_value": 419,
+        "lvl_mult": 0.7327,
+        "final_value": 307
+      },
+      "REGEN": {
+        "stat": "REGEN",
+        "value": 48,
+        "axis": "종목",
+        "source_metric": "dividendYield",
+        "raw_value": 0.0034,
+        "sector": "Basic Materials",
+        "sector_percentile": 0.0425,
+        "estimated": false,
+        "note": "Dividend yield: 0.34%",
+        "base_value": 65,
+        "lvl_mult": 0.7327,
+        "final_value": 48
+      },
+      "숙련": {
+        "stat": "숙련",
+        "value": 605,
+        "axis": "종목",
+        "source_metric": "returnOnEquity, operatingMargins, profitMargins",
+        "raw_value": {
+          "returnOnEquity": 0.16465063,
+          "operatingMargins": 0.35055,
+          "profitMargins": 0.278
+        },
+        "sector": "Basic Materials",
+        "sector_percentile": 0.8256,
+        "estimated": false,
+        "note": "Averaged: ROE_score=0.5372815955036514, OpMargin_score=1.0, ProfitMargin_score=1.0",
+        "base_value": 825,
+        "lvl_mult": 0.7327,
+        "final_value": 605
+      }
+    }
+  },
+  "SEG": {
+    "ticker": "SEG",
+    "race": "성채수호족",
+    "raceBodyType": "성채수호족_체형",
+    "subfaction": "기타",
+    "sectorLabel": "부동산",
+    "palette": {
+      "primary": "Granite",
+      "secondary": "Slate",
+      "accent": "Quartz"
+    },
+    "size": 0.4061,
+    "aura": 0.0,
+    "levelTier": 3,
+    "rarityFrame": "common",
+    "accents": [
+      "기타_휘장",
+      "방패"
+    ],
+    "dominantStat": "DEF",
+    "estimatedBadge": {
+      "enabled": true,
+      "stats": [
+        "SPD"
+      ]
+    },
+    "type": "EQUITY",
+    "stats": {
+      "HP": 412,
+      "ATK": 116,
+      "DEF": 643,
+      "SPD": 193,
+      "CRIT": 284,
+      "REGEN": 10,
+      "숙련": 10
+    },
+    "provenance": {
+      "HP": {
+        "stat": "HP",
+        "value": 412,
+        "axis": "개인화",
+        "source_metric": "shares * price",
+        "raw_value": 475.6,
+        "sector": "Real Estate",
+        "sector_percentile": 0.4058,
+        "estimated": false,
+        "note": "Log-scaled value: 6.1646 (Portfolio Range: 4.9032 - 8.0115)",
+        "base_value": 412,
+        "lvl_mult": 1.0,
+        "final_value": 412
+      },
+      "ATK": {
+        "stat": "ATK",
+        "value": 116,
+        "axis": "종목",
+        "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
+        "raw_value": {
+          "growth": -0.275,
+          "momentum": 0.5766322896590204
+        },
+        "sector": "Real Estate",
+        "sector_percentile": 0.173,
+        "estimated": false,
+        "note": "Growth score: 0.0000 (raw), 52-week momentum: 0.5766",
+        "base_value": 181,
+        "lvl_mult": 0.6435,
+        "final_value": 116
+      },
+      "DEF": {
+        "stat": "DEF",
+        "value": 643,
+        "axis": "종목",
+        "source_metric": "debtToEquity & currentRatio",
+        "raw_value": {
+          "debtToEquity_raw": 22.46,
+          "currentRatio_raw": 1.821
+        },
+        "sector": "Real Estate",
+        "sector_percentile": 1.0,
+        "estimated": false,
+        "note": "Averaged: D/E score = 1.0000, CurrentRatio score = 1.0000",
+        "base_value": 1000,
+        "lvl_mult": 0.6435,
+        "final_value": 643
+      },
+      "SPD": {
+        "stat": "SPD",
+        "value": 193,
+        "axis": "종목",
+        "source_metric": "beta",
+        "raw_value": null,
+        "sector": "Real Estate",
+        "sector_percentile": 0.5,
+        "estimated": true,
+        "note": "Beta missing, used 1.0 (300)",
+        "base_value": 300,
+        "lvl_mult": 0.6435,
+        "final_value": 193
+      },
+      "CRIT": {
+        "stat": "CRIT",
+        "value": 284,
+        "axis": "종목",
+        "source_metric": "spread",
+        "raw_value": 0.6129766647694934,
+        "sector": "Real Estate",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Spread: 0.6130",
+        "base_value": 441,
+        "lvl_mult": 0.6435,
+        "final_value": 284
+      },
+      "REGEN": {
+        "stat": "REGEN",
+        "value": 10,
+        "axis": "종목",
+        "source_metric": "dividendYield",
+        "raw_value": 0.0,
+        "sector": "Real Estate",
+        "sector_percentile": 0.0,
+        "estimated": false,
+        "note": "No dividend yield",
+        "base_value": 10,
+        "lvl_mult": 0.6435,
+        "final_value": 10
+      },
+      "숙련": {
+        "stat": "숙련",
+        "value": 10,
+        "axis": "종목",
+        "source_metric": "returnOnEquity, operatingMargins, profitMargins",
+        "raw_value": {
+          "returnOnEquity": -0.26466,
+          "operatingMargins": -0.55318,
+          "profitMargins": -0.4426
+        },
+        "sector": "Real Estate",
+        "sector_percentile": 0.0,
+        "estimated": false,
+        "note": "Averaged: ROE_score=0.0, OpMargin_score=0.0, ProfitMargin_score=0.0",
+        "base_value": 10,
+        "lvl_mult": 0.6435,
+        "final_value": 10
+      }
+    }
+  },
+  "NEE": {
+    "ticker": "NEE",
+    "race": "전류정령",
+    "raceBodyType": "전류정령_체형",
+    "subfaction": "전력유틸리티",
+    "sectorLabel": "유틸리티",
+    "palette": {
+      "primary": "Sky_Blue",
+      "secondary": "White",
+      "accent": "Gold"
+    },
+    "size": 0.5976,
+    "aura": 0.7838,
+    "levelTier": 4,
+    "rarityFrame": "epic",
+    "accents": [
+      "전력유틸리티_휘장",
+      "심장"
+    ],
+    "dominantStat": "HP",
+    "estimatedBadge": {
+      "enabled": false,
+      "stats": []
+    },
+    "type": "EQUITY",
+    "stats": {
+      "HP": 601,
+      "ATK": 427,
+      "DEF": 560,
+      "SPD": 234,
+      "CRIT": 307,
+      "REGEN": 48,
+      "숙련": 605
+    },
+    "provenance": {
+      "HP": {
+        "stat": "HP",
+        "value": 601,
+        "axis": "개인화",
+        "source_metric": "shares * price",
+        "raw_value": 907.06,
+        "sector": "Utilities",
+        "sector_percentile": 0.5977,
+        "estimated": false,
+        "note": "Log-scaled value: 6.8102 (Portfolio Range: 4.9032 - 8.0115)",
+        "base_value": 601,
+        "lvl_mult": 1.0,
+        "final_value": 601
+      },
+      "ATK": {
+        "stat": "ATK",
+        "value": 427,
+        "axis": "종목",
+        "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
+        "raw_value": {
+          "growth": 0.127,
+          "momentum": 0.7423223067883296
+        },
+        "sector": "Utilities",
+        "sector_percentile": 0.5785,
+        "estimated": false,
+        "note": "Growth score: 0.5844 (raw), 52-week momentum: 0.7423",
+        "base_value": 583,
+        "lvl_mult": 0.7327,
+        "final_value": 427
+      },
+      "DEF": {
+        "stat": "DEF",
+        "value": 560,
+        "axis": "종목",
+        "source_metric": "debtToEquity & currentRatio",
+        "raw_value": {
+          "debtToEquity_raw": 31.905,
+          "currentRatio_raw": 1.821
+        },
+        "sector": "Utilities",
+        "sector_percentile": 0.7645,
+        "estimated": false,
+        "note": "Averaged: D/E score = 0.6974, CurrentRatio score = 0.8315",
+        "base_value": 764,
+        "lvl_mult": 0.7327,
+        "final_value": 560
+      },
+      "SPD": {
+        "stat": "SPD",
+        "value": 234,
+        "axis": "종목",
+        "source_metric": "beta",
+        "raw_value": 1.086,
+        "sector": "Utilities",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Beta: 1.0860",
+        "base_value": 319,
+        "lvl_mult": 0.7327,
+        "final_value": 234
+      },
+      "CRIT": {
+        "stat": "CRIT",
+        "value": 307,
+        "axis": "종목",
+        "source_metric": "spread",
+        "raw_value": 0.6271082175629261,
+        "sector": "Utilities",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Spread: 0.6271",
+        "base_value": 419,
+        "lvl_mult": 0.7327,
+        "final_value": 307
+      },
+      "REGEN": {
+        "stat": "REGEN",
+        "value": 48,
+        "axis": "종목",
+        "source_metric": "dividendYield",
+        "raw_value": 0.0034,
+        "sector": "Utilities",
+        "sector_percentile": 0.0425,
+        "estimated": false,
+        "note": "Dividend yield: 0.34%",
+        "base_value": 65,
+        "lvl_mult": 0.7327,
+        "final_value": 48
+      },
+      "숙련": {
+        "stat": "숙련",
+        "value": 605,
+        "axis": "종목",
+        "source_metric": "returnOnEquity, operatingMargins, profitMargins",
+        "raw_value": {
+          "returnOnEquity": 0.16465063,
+          "operatingMargins": 0.35055,
+          "profitMargins": 0.278
+        },
+        "sector": "Utilities",
+        "sector_percentile": 0.8256,
+        "estimated": false,
+        "note": "Averaged: ROE_score=0.5372815955036514, OpMargin_score=1.0, ProfitMargin_score=1.0",
+        "base_value": 825,
+        "lvl_mult": 0.7327,
+        "final_value": 605
+      }
+    }
+  },
+  "META": {
+    "ticker": "META",
+    "race": "파동전령",
+    "raceBodyType": "파동전령_체형",
+    "subfaction": "인터넷서비스",
+    "sectorLabel": "커뮤니케이션",
+    "palette": {
+      "primary": "Pink",
+      "secondary": "Lavender",
+      "accent": "Rose"
+    },
+    "size": 0.9512,
+    "aura": 0.8806,
+    "levelTier": 5,
+    "rarityFrame": "legendary",
+    "accents": [
+      "인터넷서비스_휘장",
+      "심장"
+    ],
+    "dominantStat": "HP",
+    "estimatedBadge": {
+      "enabled": false,
+      "stats": []
+    },
+    "type": "EQUITY",
+    "stats": {
+      "HP": 951,
+      "ATK": 605,
+      "DEF": 764,
+      "SPD": 387,
+      "CRIT": 375,
+      "REGEN": 52,
+      "숙련": 839
+    },
+    "provenance": {
+      "HP": {
+        "stat": "HP",
+        "value": 951,
+        "axis": "개인화",
+        "source_metric": "shares * price",
+        "raw_value": 2043.68,
+        "sector": "Communication Services",
+        "sector_percentile": 0.9512,
+        "estimated": false,
+        "note": "Log-scaled value: 7.6225 (Portfolio Range: 4.9032 - 8.0115)",
+        "base_value": 951,
+        "lvl_mult": 1.0,
+        "final_value": 951
+      },
+      "ATK": {
+        "stat": "ATK",
+        "value": 605,
+        "axis": "종목",
+        "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
+        "raw_value": {
+          "growth": 0.127,
+          "momentum": 0.7836223067883296
+        },
+        "sector": "Communication Services",
+        "sector_percentile": 0.6358,
+        "estimated": false,
+        "note": "Growth score: 0.5844 (raw), 52-week momentum: 0.7836",
+        "base_value": 636,
+        "lvl_mult": 0.9512,
+        "final_value": 605
+      },
+      "DEF": {
+        "stat": "DEF",
+        "value": 764,
+        "axis": "종목",
+        "source_metric": "debtToEquity & currentRatio",
+        "raw_value": {
+          "debtToEquity_raw": 31.905,
+          "currentRatio_raw": 1.821
+        },
+        "sector": "Communication Services",
+        "sector_percentile": 0.8013,
+        "estimated": false,
+        "note": "Averaged: D/E score = 0.8007, CurrentRatio score = 0.8019",
+        "base_value": 803,
+        "lvl_mult": 0.9512,
+        "final_value": 764
+      },
+      "SPD": {
+        "stat": "SPD",
+        "value": 387,
+        "axis": "종목",
+        "source_metric": "beta",
+        "raw_value": 1.229,
+        "sector": "Communication Services",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Beta: 1.2290",
+        "base_value": 407,
+        "lvl_mult": 0.9512,
+        "final_value": 387
+      },
+      "CRIT": {
+        "stat": "CRIT",
+        "value": 375,
+        "axis": "종목",
+        "source_metric": "spread",
+        "raw_value": 0.5304847576211894,
+        "sector": "Communication Services",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Spread: 0.5305",
+        "base_value": 394,
+        "lvl_mult": 0.9512,
+        "final_value": 375
+      },
+      "REGEN": {
+        "stat": "REGEN",
+        "value": 52,
+        "axis": "종목",
+        "source_metric": "dividendYield",
+        "raw_value": 0.0036,
+        "sector": "Communication Services",
+        "sector_percentile": 0.045,
+        "estimated": false,
+        "note": "Dividend yield: 0.36%",
+        "base_value": 55,
+        "lvl_mult": 0.9512,
+        "final_value": 52
+      },
+      "숙련": {
+        "stat": "숙련",
+        "value": 839,
+        "axis": "종목",
+        "source_metric": "returnOnEquity, operatingMargins, profitMargins",
+        "raw_value": {
+          "returnOnEquity": 0.32930002,
+          "operatingMargins": 0.40617,
+          "profitMargins": 0.32837
+        },
+        "sector": "Communication Services",
+        "sector_percentile": 0.8806,
+        "estimated": false,
+        "note": "Averaged: ROE_score=0.799430090702566, OpMargin_score=1.0, ProfitMargin_score=0.8423492047584578",
+        "base_value": 882,
+        "lvl_mult": 0.9512,
+        "final_value": 839
+      }
+    }
+  },
+  "SPY": {
+    "ticker": "SPY",
+    "race": "지수형",
+    "raceBodyType": "중립골격",
+    "subfaction": "지수형",
+    "sectorLabel": "지수형",
+    "palette": {
+      "primary": "Neutral_Gray",
+      "secondary": "Silver",
+      "accent": "Platinum"
+    },
+    "size": 0.901,
+    "aura": 0.4697,
+    "levelTier": 5,
+    "rarityFrame": "common",
+    "accents": [
+      "지수형_휘장",
+      "심장"
+    ],
+    "dominantStat": "HP",
+    "estimatedBadge": {
+      "enabled": true,
+      "stats": [
+        "ATK",
+        "DEF",
+        "SPD",
+        "숙련"
+      ]
+    },
+    "type": "ETF",
+    "stats": {
+      "HP": 902,
+      "ATK": 579,
+      "DEF": 475,
+      "SPD": 282,
+      "CRIT": 222,
+      "REGEN": 123,
+      "숙련": 475
+    },
+    "provenance": {
+      "HP": {
+        "stat": "HP",
+        "value": 902,
+        "axis": "개인화",
+        "source_metric": "shares * price",
+        "raw_value": 2217.66,
+        "sector": "N/A",
+        "sector_percentile": 0.9011,
+        "estimated": false,
+        "note": "Log-scaled value: 7.7042 (Portfolio Range: 4.9032 - 8.0115)",
+        "base_value": 902,
+        "lvl_mult": 1.0,
+        "final_value": 902
+      },
+      "ATK": {
+        "stat": "ATK",
+        "value": 579,
+        "axis": "종목",
+        "source_metric": "0.7 * G_score (0.5) + 0.3 * Mom",
+        "raw_value": 0.8743101299626138,
+        "sector": "N/A",
+        "sector_percentile": 0.5,
+        "estimated": true,
+        "note": "ETF recipe. Growth missing (used 0.5). 52-week momentum: 0.8743",
+        "base_value": 616,
+        "lvl_mult": 0.9407,
+        "final_value": 579
+      },
+      "DEF": {
+        "stat": "DEF",
+        "value": 475,
+        "axis": "종목",
+        "source_metric": "N/A",
+        "raw_value": null,
+        "sector": "N/A",
+        "sector_percentile": 0.5,
+        "estimated": true,
+        "note": "ETF recipe. Corporate health missing, used 0.5 (505)",
+        "base_value": 505,
+        "lvl_mult": 0.9407,
+        "final_value": 475
+      },
+      "SPD": {
+        "stat": "SPD",
+        "value": 282,
+        "axis": "종목",
+        "source_metric": "beta",
+        "raw_value": 1.0,
+        "sector": "N/A",
+        "sector_percentile": 0.5,
+        "estimated": true,
+        "note": "Beta missing, used 1.0 (300)",
+        "base_value": 300,
+        "lvl_mult": 0.9407,
+        "final_value": 282
+      },
+      "CRIT": {
+        "stat": "CRIT",
+        "value": 222,
+        "axis": "종목",
+        "source_metric": "spread",
+        "raw_value": 0.28469817026812416,
+        "sector": "N/A",
+        "sector_percentile": 0.5,
+        "estimated": false,
+        "note": "Spread: 0.2847",
+        "base_value": 236,
+        "lvl_mult": 0.9407,
+        "final_value": 222
+      },
+      "REGEN": {
+        "stat": "REGEN",
+        "value": 123,
+        "axis": "종목",
+        "source_metric": "dividendYield",
+        "raw_value": 0.0098,
+        "sector": "N/A",
+        "sector_percentile": 0.1225,
+        "estimated": false,
+        "note": "Dividend yield: 0.98%",
+        "base_value": 131,
+        "lvl_mult": 0.9407,
+        "final_value": 123
+      },
+      "숙련": {
+        "stat": "숙련",
+        "value": 475,
+        "axis": "종목",
+        "source_metric": "N/A",
+        "raw_value": null,
+        "sector": "N/A",
+        "sector_percentile": 0.5,
+        "estimated": true,
+        "note": "ETF recipe. Profitability missing, used 0.5 (505)",
+        "base_value": 505,
+        "lvl_mult": 0.9407,
+        "final_value": 475
+      }
+    }
+  }
+};
 
-    // Color Palette Hex mappings
+    // Color Palette Hex mappings covering all 11 sectors + ETFs
     const colorMap = {
       "Gold": "#ffdf00",
       "Bronze": "#cd7f32",
@@ -865,9 +2188,45 @@
       "Neon_Purple": "#b026ff",
       "Cyan": "#00ffff",
       
+      "Forest_Green": "#22c55e",
+      "Silver": "#cbd5e1",
+      "Emerald": "#10b981",
+      
+      "Orange": "#f97316",
+      "Brown": "#78350f",
+      "Amber": "#f59e0b",
+      
+      "Tan": "#b45309",
+      "Wheat": "#fef08a",
+      
+      "Steel_Gray": "#64748b",
+      "Iron": "#475569",
+      "Rust": "#b44c16",
+      
       "Crimson": "#e60000",
       "Charcoal": "#2b2b2b",
-      "Fire": "#ff5500"
+      "Fire": "#ff5500",
+      
+      "Earth_Brown": "#783d19",
+      "Stone": "#78716c",
+      "Topaz": "#d97706",
+      
+      "Granite": "#4b5563",
+      "Slate": "#374151",
+      "Quartz": "#e2e8f0",
+      
+      "Sky_Blue": "#38bdf8",
+      "White": "#ffffff",
+      
+      "Pink": "#ec4899",
+      "Lavender": "#c084fc",
+      "Rose": "#f43f5e",
+      
+      "Neutral_Gray": "#6b7280",
+      "Platinum": "#e2e8f0",
+      
+      "Gray": "#9ca3af",
+      "Dark_Gray": "#374151"
     };
 
     function Star() {
@@ -881,43 +2240,226 @@
     // React SVG Character Silhouette Renderer
     function CharacterSilhouette({ raceBodyType, size, aura }) {
       if (raceBodyType === "황금기사단_체형") {
-        // --- 1. 황금기사단 체형 (Heavy Knight): 각진 큰 사각 몸통, 낮고 넓은 비례, 견장 종족 마커 ---
+        // --- 1. 황금기사단 (JPM): 각진 큰 사각 몸통, 낮고 넓은 비례, 견장 종족 마커 ---
         return (
           <g transform={`translate(200, 220) scale(${size}) translate(-200, -200)`}>
-            {/* Helmet Crest */}
             <path d="M170 100 L200 45 L230 100 Z" fill="var(--color-secondary)" stroke="#8c4800" strokeWidth="2" />
-            
-            {/* Helmet Dome */}
             <path d="M155 140 C155 80 245 80 245 140 L240 160 L160 160 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3" />
-            
-            {/* Visor Area */}
             <rect x="168" y="125" width="64" height="22" rx="3" fill="#111" stroke="var(--color-secondary)" strokeWidth="2" />
-            
-            {/* Visor Slit Ruby Glow */}
             <rect x="174" y="133" width="52" height="5" rx="1.5" fill="var(--color-accent)" filter="url(#visorGlow)" />
-
-            {/* pauldrons (어깨 견장 - 종족 마커) */}
-            {/* Left Pauldron */}
+            {/* Pauldrons (견장) */}
             <path d="M80 180 C80 135 145 140 145 185 L120 220 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3" />
             <polygon points="80,180 70,165 95,170" fill="var(--color-secondary)" stroke="#8c4800" strokeWidth="1" />
-            <polygon points="85,195 72,190 92,185" fill="var(--color-secondary)" stroke="#8c4800" strokeWidth="1" />
-
-            {/* Right Pauldron */}
             <path d="M320 180 C320 135 255 140 255 185 L280 220 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3" />
             <polygon points="320,180 330,165 305,170" fill="var(--color-secondary)" stroke="#8c4800" strokeWidth="1" />
-            <polygon points="315,195 328,190 308,185" fill="var(--color-secondary)" stroke="#8c4800" strokeWidth="1" />
-
-            {/* Collar Neck Guard */}
+            
             <path d="M145 160 L255 160 L235 185 L165 185 Z" fill="var(--color-secondary)" stroke="#8c4800" strokeWidth="2" />
-
-            {/* Heavy Breastplate (Trapezoidal body) */}
             <polygon points="135,185 265,185 285,285 115,285" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4" />
-
-            {/* Segmented Abdomen */}
             <polygon points="120,285 280,285 272,315 128,315" fill="var(--color-secondary)" stroke="#8c4800" strokeWidth="2.5" />
             <polygon points="128,315 272,315 260,345 140,345" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
+          </g>
+        );
+      } else if (raceBodyType === "기계종_체형") {
+        // --- 2. 기계종 (NVDA): 얇고 세로로 긴 비례, 안테나 마커 ---
+        return (
+          <g transform={`translate(200, 200) scale(${size}) translate(-200,-180)`}>
+            {/* Twin Antennae */}
+            <line x1="182" y1="100" x2="162" y2="40" stroke="var(--color-secondary)" strokeWidth="3" />
+            <circle cx="162" cy="40" r="5" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            <line x1="218" y1="100" x2="238" y2="40" stroke="var(--color-secondary)" strokeWidth="3" />
+            <circle cx="238" cy="40" r="5" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            {/* Head */}
+            <polygon points="175,100 225,100 235,160 200,180 165,160" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
+            <rect x="180" y="125" width="40" height="8" rx="2" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            {/* Neck */}
+            <rect x="193" y="180" width="14" height="20" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="1.5" />
+            {/* pauldrons */}
+            <polygon points="120,200 160,200 155,225 130,225" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2" />
+            <polygon points="280,200 240,200 245,225 270,225" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2" />
+            {/* Torso */}
+            <polygon points="155,200 245,200 225,305 175,305" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3.5" />
+            <rect x="190" y="305" width="20" height="50" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="2" />
+          </g>
+        );
+      } else if (raceBodyType === "화염거인_체형") {
+        // --- 3. 화염거인 (XOM): 육중한 몸체, 위로 솟구치는 뾰족한 화염 마커 ---
+        return (
+          <g transform={`translate(200, 240) scale(${size}) translate(-200,-200)`}>
+            {/* Sharp upward-flickering Flame Spikes (불꽃돌기 마커) */}
+            <path d="M190 95 Q200 40 200 32 Q200 40 210 95 Z" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            <path d="M175 100 Q162 48 168 53 Q180 80 190 100 Z" fill="var(--color-accent)" />
+            <path d="M225 100 Q238 48 232 53 Q220 80 210 100 Z" fill="var(--color-accent)" />
+            {/* Head */}
+            <path d="M160 135 C160 95 240 95 240 135 L225 155 L175 155 Z" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="3" />
+            <polygon points="175,125 225,125 218,138 182,138" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            {/* Massive Shoulders */}
+            <circle cx="105" cy="180" r="52" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4" />
+            <path d="M85,135 L62,110 L90,135 Z" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            <circle cx="295" cy="180" r="52" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4" />
+            <path d="M315,135 L338,110 L310,135 Z" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            {/* Torso */}
+            <path d="M115,175 L285,175 C315,225 315,305 285,325 L115,325 C85,305 85,225 115,175 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="5.5" />
+            <path d="M135,325 L265,325 C250,365 150,365 135,325 Z" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="3" />
+          </g>
+        );
+      } else if (raceBodyType === "생명교단_체형") {
+        // --- 4. 생명교단 (LLY): 매끈한 유선형 중간 체격, 등 뒤 십자/생명룬 후광 마커 ---
+        return (
+          <g transform={`translate(200, 210) scale(${size}) translate(-200,-180)`}>
+            {/* Life Cross Halo (등 뒤 십자 후광) */}
+            <circle cx="200" cy="200" r="75" fill="none" stroke="var(--color-accent)" strokeWidth="3" strokeDasharray="12 6" filter="url(#visorGlow)" opacity="0.8" />
+            <line x1="200" y1="120" x2="200" y2="280" stroke="var(--color-accent)" strokeWidth="2.5" filter="url(#visorGlow)" opacity="0.6" />
+            <line x1="120" y1="200" x2="280" y2="200" stroke="var(--color-accent)" strokeWidth="2.5" filter="url(#visorGlow)" opacity="0.6" />
+            <circle cx="200" cy="120" r="4" fill="var(--color-accent)" />
+            <circle cx="200" cy="280" r="4" fill="var(--color-accent)" />
+            <circle cx="120" cy="200" r="4" fill="var(--color-accent)" />
+            <circle cx="280" cy="200" r="4" fill="var(--color-accent)" />
+            {/* Head */}
+            <circle cx="200" cy="130" r="23" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
+            <path d="M192 125 C192 115 208 115 208 125 C208 135 192 135 192 125 Z" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            {/* Sleek Body */}
+            <path d="M155 190 Q200 160 245 190 L220 310 L180 310 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3" />
+            <path d="M175 310 L160 360 L180 360 L185 310 Z" fill="var(--color-secondary)" />
+            <path d="M225 310 L240 360 L220 360 L215 310 Z" fill="var(--color-secondary)" />
+          </g>
+        );
+      } else if (raceBodyType === "유랑상단_체형") {
+        // --- 5. 유랑상단 (RIVN): 날씬·비대칭 체형, 망토 휘날림, 어깨 봇짐 마커 ---
+        return (
+          <g transform={`translate(200, 200) scale(${size}) translate(-200,-180)`}>
+            {/* Flowing Cape (휘날리는 망토) */}
+            <path d="M140 190 Q90 230 75 330 Q120 290 160 220 Z" fill="var(--color-secondary)" opacity="0.85" stroke="var(--color-primary)" strokeWidth="1.5" />
+            {/* Head */}
+            <polygon points="185,115 215,115 205,150 195,150" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
+            <rect x="190" y="123" width="20" height="9" rx="1.5" fill="var(--color-accent)" />
+            {/* Asymmetrical Torso */}
+            <polygon points="150,190 235,175 215,295 170,295" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3" />
+            {/* Shoulder Bundle (봇짐 마커) */}
+            <circle cx="132" cy="172" r="17" fill="var(--color-secondary)" stroke="var(--color-accent)" strokeWidth="2" />
+            <path d="M139 160 C146 150 156 160 146 165 C139 170 132 165 139 160 Z" fill="var(--color-accent)" />
+          </g>
+        );
+      } else if (raceBodyType === "곡물수호자_체형") {
+        // --- 6. 곡물수호자 (KO): 둥글고 펑퍼짐한 체형, 곡식다발 마커 ---
+        return (
+          <g transform={`translate(200, 210) scale(${size}) translate(-200,-180)`}>
+            {/* Round Head */}
+            <circle cx="200" cy="130" r="28" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
+            <circle cx="200" cy="130" r="12" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            {/* Plump Body */}
+            <path d="M130 190 C110 265 290 265 270 190 L240 330 L160 330 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3.5" />
+            {/* Wheat sheaf (곡식다발 마커) on left side */}
+            <g transform="translate(100, 210) rotate(-15)">
+              <rect x="5" y="15" width="8" height="40" rx="3" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="1.5" />
+              <path d="M9 15 Q-5 -10 -10 -25 Q15 -10 9 15 Z" fill="var(--color-accent)" />
+              <path d="M9 15 Q23 -10 28 -25 Q10 -10 9 15 Z" fill="var(--color-accent)" />
+              <circle cx="9" cy="-15" r="4" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            </g>
+          </g>
+        );
+      } else if (raceBodyType === "강철공방_체형") {
+        // --- 7. 강철공방 (GE): 각지고 비대칭 체형, 거대 망치팔 마커 ---
+        return (
+          <g transform={`translate(200, 200) scale(${size}) translate(-200,-180)`}>
+            {/* Spiked Helm */}
+            <polygon points="175,120 200,75 225,120 215,145 185,145" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
+            <path d="M185 110 L215 110 L210 120 L190 123 Z" fill="var(--color-accent)" />
+            {/* Bulky chest */}
+            <polygon points="120,180 270,180 250,290 140,290" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4" />
+            {/* Giant Hammer Arm (거대 망치팔 마커) */}
+            <rect x="250" y="195" width="45" height="18" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="2" transform="rotate(25 250 195)" />
+            <rect x="282" y="145" width="28" height="85" rx="5" fill="var(--color-accent)" stroke="var(--color-primary)" strokeWidth="3" transform="rotate(15 285 145)" filter="url(#visorGlow)" />
+            {/* Gear symbol on left shoulder */}
+            <circle cx="125" cy="180" r="14" fill="var(--color-secondary)" />
+            <circle cx="125" cy="180" r="6" fill="#111" />
+          </g>
+        );
+      } else if (raceBodyType === "광맥족_체형") {
+        // --- 8. 광맥족 (FCX): 바위 질감 짜리몽땅, 어깨 광물 결정 돌기 마커 ---
+        return (
+          <g transform={`translate(200, 220) scale(${size}) translate(-200,-180)`}>
+            {/* Short Head */}
+            <polygon points="178,140 222,140 212,175 188,175" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="2.5" />
+            <rect x="186" y="147" width="28" height="8" rx="1" fill="var(--color-accent)" />
+            {/* Rocky Squat Body */}
+            <path d="M130 190 L270 190 L250 310 L150 310 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4" />
+            {/* Rocky cracks */}
+            <line x1="150" y1="210" x2="180" y2="245" stroke="var(--color-secondary)" strokeWidth="2" />
+            <line x1="250" y1="220" x2="220" y2="255" stroke="var(--color-secondary)" strokeWidth="2" />
+            {/* Shoulder mineral crystals (광물 결정 마커) */}
+            <polygon points="130,190 105,160 135,175" fill="var(--color-accent)" stroke="var(--color-primary)" strokeWidth="1.5" filter="url(#visorGlow)" />
+            <polygon points="270,190 295,160 265,175" fill="var(--color-accent)" stroke="var(--color-primary)" strokeWidth="1.5" filter="url(#visorGlow)" />
+          </g>
+        );
+      } else if (raceBodyType === "성채수호족_체형") {
+        // --- 9. 성채수호족 (SEG): 세로로 높은 탑형 몸통, 성가퀴(망루) 머리 윤곽 마커 ---
+        return (
+          <g transform={`translate(200, 200) scale(${size}) translate(-200,-160)`}>
+            {/* Castle Battlement head (성가퀴 망루 윤곽 마커) */}
+            <path d="M170 130 L170 95 L182 95 L182 105 L194 105 L194 95 L206 95 L206 105 L218 105 L218 95 L230 95 L230 130 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
+            <rect x="180" y="112" width="40" height="7" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            {/* Tall Tower Body */}
+            <rect x="145" y="130" width="110" height="190" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4.5" />
+            <line x1="145" y1="190" x2="255" y2="190" stroke="var(--color-secondary)" strokeWidth="2" />
+            <line x1="145" y1="250" x2="255" y2="250" stroke="var(--color-secondary)" strokeWidth="2" />
+            {/* Vertical brick lines */}
+            <line x1="180" y1="130" x2="180" y2="190" stroke="var(--color-secondary)" strokeWidth="1.5" />
+            <line x1="220" y1="130" x2="220" y2="190" stroke="var(--color-secondary)" strokeWidth="1.5" />
+            <line x1="200" y1="190" x2="200" y2="250" stroke="var(--color-secondary)" strokeWidth="1.5" />
+            <line x1="180" y1="250" x2="180" y2="320" stroke="var(--color-secondary)" strokeWidth="1.5" />
+            <line x1="220" y1="250" x2="220" y2="320" stroke="var(--color-secondary)" strokeWidth="1.5" />
+          </g>
+        );
+      } else if (raceBodyType === "전류정령_체형") {
+        // --- 10. 전류정령 (NEE): 길고 흐물한 정령체, 몸 관통 번개 윤곽 마커 ---
+        return (
+          <g transform={`translate(200, 200) scale(${size}) translate(-200,-160)`}>
+            {/* Flame/Wisp Head */}
+            <path d="M200 75 Q225 105 200 135 Q175 105 200 75 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
+            <circle cx="192" cy="110" r="4" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            <circle cx="208" cy="110" r="4" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            {/* Wispy body tail (다리 모호) */}
+            <path d="M170 135 C170 135 230 135 230 165 C230 215 160 255 200 350 C210 290 220 220 190 165 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3" />
+            {/* Lightning bolt cutting body (몸 관통 번개 마커) */}
+            <polygon points="200,85 220,155 190,175 230,265 180,285 205,335 170,255 195,235 160,160" fill="var(--color-accent)" filter="url(#visorGlow)" opacity="0.9" />
+          </g>
+        );
+      } else if (raceBodyType === "파동전령_체형") {
+        // --- 11. 파동전령 (META): 가볍고 떠있는 느낌, 머리 뒤 동심원 파동 마커 ---
+        return (
+          <g transform={`translate(200, 200) scale(${size}) translate(-200,-170)`}>
+            {/* Concentric ripple waves (동심원 파동 마커) */}
+            <circle cx="200" cy="120" r="38" fill="none" stroke="var(--color-accent)" strokeWidth="2" strokeDasharray="6 6" opacity="0.75" filter="url(#visorGlow)" />
+            <circle cx="200" cy="120" r="54" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeDasharray="10 10" opacity="0.45" />
+            {/* Floating Head */}
+            <circle cx="200" cy="120" r="21" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
+            <rect x="187" y="114" width="26" height="4" fill="var(--color-accent)" />
+            <rect x="187" y="122" width="26" height="4" fill="var(--color-accent)" />
+            {/* Floating body parts */}
+            <polygon points="160,165 240,165 220,230 180,230" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
+            <circle cx="200" cy="268" r="16" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="2.5" />
+          </g>
+        );
+      } else if (raceBodyType === "중립골격") {
+        // --- 12. 지수형 (SPY): 입체 십이면체/프리즘 중립 골격 ---
+        return (
+          <g transform={`translate(200, 200) scale(${size}) translate(-200,-200)`}>
+            <polygon points="200,80 290,140 290,260 200,320 110,260 110,140" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4" />
+            <line x1="200" y1="80" x2="200" y2="320" stroke="var(--color-secondary)" strokeWidth="2.5" />
+            <line x1="110" y1="140" x2="290" y2="260" stroke="var(--color-secondary)" strokeWidth="2.5" />
+            <line x1="110" y1="260" x2="290" y2="140" stroke="var(--color-secondary)" strokeWidth="2.5" />
+            <circle cx="200" cy="200" r="28" fill="var(--color-accent)" filter="url(#visorGlow)" />
+          </g>
+        );
+      }
+      return null;
+    }
 
-            {/* 은행_휘장 (Coin & Scales Emblem on Chest Center) */}
+    // React SVG Custom/Generic Subfaction Emblem Renderer
+    function SubfactionEmblem({ subfaction }) {
+      if (subfaction === "은행") {
+        return (
+          <g>
             <circle cx="200" cy="222" r="22" fill="#2d1703" stroke="var(--color-primary)" strokeWidth="2.5" />
             <circle cx="200" cy="222" r="18" fill="var(--color-secondary)" />
             <line x1="200" y1="210" x2="200" y2="231" stroke="var(--color-primary)" strokeWidth="2.5" />
@@ -926,119 +2468,99 @@
             <line x1="212" y1="216" x2="212" y2="225" stroke="var(--color-primary)" strokeWidth="1.5" />
             <circle cx="188" cy="225" r="3.5" fill="var(--color-accent)" />
             <circle cx="212" cy="225" r="3.5" fill="var(--color-accent)" />
-
-            {/* HP Dominant Accent 심장 (Pulsing Heart Core at cx=200, cy=252) */}
-            <g className="pulse-heart">
-              <path d="M12,5 C10.5,3.5 8,3.5 6.5,5 C5,6.5 5,9 6.5,10.5 L12,16 L17.5,10.5 C19,9 19,6.5 17.5,5 C16,3.5 13.5,3.5 12,5 Z" 
-                    fill="var(--color-accent)" 
-                    transform="translate(188, 244) scale(1.0)" />
-            </g>
           </g>
         );
-      } else if (raceBodyType === "기계종_체형") {
-        // --- 2. 기계종 체형 (Slim Mech): 얇고 세로로 긴 비례, 날카로운 각/안테나, 기계식 연결 ---
+      } else if (subfaction === "반도체") {
         return (
-          <g transform={`translate(200, 200) scale(${size}) translate(-200,-180)`}>
-            {/* Twin Antennae (안테나 - 종족 마커) */}
-            <line x1="182" y1="100" x2="162" y2="40" stroke="var(--color-secondary)" strokeWidth="3" />
-            <circle cx="162" cy="40" r="5" fill="var(--color-accent)" filter="url(#visorGlow)" />
-            
-            <line x1="218" y1="100" x2="238" y2="40" stroke="var(--color-secondary)" strokeWidth="3" />
-            <circle cx="238" cy="40" r="5" fill="var(--color-accent)" filter="url(#visorGlow)" />
-
-            {/* Sharp Hexagon Head */}
-            <polygon points="175,100 225,100 235,160 200,180 165,160" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
-            
-            {/* Glowing Visor Line (Cyan) */}
-            <rect x="180" y="125" width="40" height="8" rx="2" fill="var(--color-accent)" filter="url(#visorGlow)" />
-
-            {/* Segmented Neck */}
-            <rect x="193" y="180" width="14" height="20" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="1.5" />
-            <line x1="193" y1="190" x2="207" y2="190" stroke="var(--color-accent)" strokeWidth="2" />
-
-            {/* Sharp pauldrons */}
-            {/* Left Pauldron */}
-            <polygon points="120,200 160,200 155,225 130,225" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2" />
-            <circle cx="120" cy="200" r="5" fill="var(--color-secondary)" />
-            
-            {/* Right Pauldron */}
-            <polygon points="280,200 240,200 245,225 270,225" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2" />
-            <circle cx="280" cy="200" r="5" fill="var(--color-secondary)" />
-
-            {/* Slim Tall Chest Plate */}
-            <polygon points="155,200 245,200 225,305 175,305" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3.5" />
-
-            {/* Slim mechanical spine */}
-            <rect x="190" y="305" width="20" height="50" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="2" />
-            <circle cx="200" cy="320" r="4" fill="var(--color-accent)" />
-            <circle cx="200" cy="340" r="4" fill="var(--color-accent)" />
-
-            {/* 반도체_휘장 (Emblem on Chest Center) */}
-            <rect x="186" y="218" width="28" height="28" rx="4" fill="#0d1117" stroke="var(--color-accent)" strokeWidth="2" />
-            <rect x="193" y="225" width="14" height="14" fill="var(--color-secondary)" rx="2" />
-            <circle cx="200" cy="232" r="4" fill="var(--color-accent)" />
-            {/* gold pin paths */}
-            <line x1="190" y1="218" x2="190" y2="213" stroke="var(--color-accent)" strokeWidth="1.5" />
-            <line x1="200" y1="218" x2="200" y2="213" stroke="var(--color-accent)" strokeWidth="1.5" />
-            <line x1="210" y1="218" x2="210" y2="213" stroke="var(--color-accent)" strokeWidth="1.5" />
-            <line x1="190" y1="246" x2="190" y2="251" stroke="var(--color-accent)" strokeWidth="1.5" />
-            <line x1="200" y1="246" x2="200" y2="251" stroke="var(--color-accent)" strokeWidth="1.5" />
-            <line x1="210" y1="246" x2="210" y2="251" stroke="var(--color-accent)" strokeWidth="1.5" />
-
-            {/* Dominant Accent 지팡이 (Mechanical staff on right side at cx=290) */}
-            <line x1="295" y1="320" x2="295" y2="100" stroke="var(--color-secondary)" strokeWidth="4" />
-            <polygon points="285,100 305,100 295,70" fill="var(--color-accent)" filter="url(#visorGlow)" />
-            <circle cx="295" cy="85" r="4" fill="#fff" />
-            <circle cx="295" cy="210" r="7" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2" />
+          <g>
+            <rect x="186" y="208" width="28" height="28" rx="4" fill="#0d1117" stroke="var(--color-accent)" strokeWidth="2" />
+            <rect x="193" y="215" width="14" height="14" fill="var(--color-secondary)" rx="2" />
+            <circle cx="200" cy="222" r="4" fill="var(--color-accent)" />
+            <line x1="190" y1="208" x2="190" y2="203" stroke="var(--color-accent)" strokeWidth="1.5" />
+            <line x1="200" y1="208" x2="200" y2="203" stroke="var(--color-accent)" strokeWidth="1.5" />
+            <line x1="210" y1="208" x2="210" y2="203" stroke="var(--color-accent)" strokeWidth="1.5" />
+            <line x1="190" y1="236" x2="190" y2="241" stroke="var(--color-accent)" strokeWidth="1.5" />
+            <line x1="200" y1="236" x2="200" y2="241" stroke="var(--color-accent)" strokeWidth="1.5" />
+            <line x1="210" y1="236" x2="210" y2="241" stroke="var(--color-accent)" strokeWidth="1.5" />
           </g>
         );
-      } else if (raceBodyType === "화염거인_체형") {
-        // --- 3. 화염거인 체형 (Bulky Giant): 거대하고 육중한 덩치, 둥근 어깨, 머리 불꽃돌기 마커 ---
+      } else if (subfaction === "에너지 E&P") {
         return (
-          <g transform={`translate(200, 240) scale(${size}) translate(-200,-200)`}>
-            {/* Fiery Head Spikes (불꽃돌기 - 종족 마커) */}
-            <path d="M195 90 L200 45 L205 90 Z" fill="var(--color-accent)" filter="url(#visorGlow)" />
-            <path d="M180 95 L170 65 L185 90 Z" fill="var(--color-accent)" />
-            <path d="M220 95 L230 65 L215 90 Z" fill="var(--color-accent)" />
-
-            {/* Bulky low Head */}
-            <path d="M160 135 C160 95 240 95 240 135 L225 155 L175 155 Z" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="3" />
-            
-            {/* Fiery Visor Slit */}
-            <polygon points="175,125 225,125 218,138 182,138" fill="var(--color-accent)" filter="url(#visorGlow)" />
-
-            {/* Giant Rounded Pauldrons (Rounded shoulder caps) */}
-            {/* Left Pauldron */}
-            <circle cx="105" cy="180" r="52" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4" />
-            <path d="M85,135 L65,115 L90,135 Z" fill="var(--color-accent)" filter="url(#visorGlow)" />
-
-            {/* Right Pauldron */}
-            <circle cx="295" cy="180" r="52" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4" />
-            <path d="M315,135 L335,115 L310,135 Z" fill="var(--color-accent)" filter="url(#visorGlow)" />
-
-            {/* Bulky neck collar */}
-            <path d="M150 155 L250 155 L240 175 L160 175 Z" fill="var(--color-secondary)" />
-
-            {/* Massive Circular Chest Body */}
-            <path d="M115,175 L285,175 C315,225 315,305 285,325 L115,325 C85,305 85,225 115,175 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="5.5" />
-
-            {/* Giant abdominal plate */}
-            <path d="M135,325 L265,325 C250,365 150,365 135,325 Z" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="3" />
-
-            {/* 에너지 E&P_휘장 (Derrick Fire Emblem on Chest Center) */}
-            <polygon points="175,195 225,195 215,245 185,245" fill="var(--color-secondary)" stroke="var(--color-accent)" strokeWidth="2.5" />
-            <line x1="200" y1="200" x2="200" y2="240" stroke="var(--color-accent)" strokeWidth="3" />
-            <line x1="185" y1="240" x2="200" y2="210" stroke="var(--color-accent)" strokeWidth="2.5" />
-            <line x1="215" y1="240" x2="200" y2="210" stroke="var(--color-accent)" strokeWidth="2.5" />
-            <circle cx="200" cy="202" r="4.5" fill="#fff" filter="url(#visorGlow)" />
-
-            {/* HP Dominant Accent 심장 (Pulsing Heart Core for Giant at cx=200, cy=282) */}
-            <g className="pulse-heart-giant">
-              <path d="M12,5 C10.5,3.5 8,3.5 6.5,5 C5,6.5 5,9 6.5,10.5 L12,16 L17.5,10.5 C19,9 19,6.5 17.5,5 C16,3.5 13.5,3.5 12,5 Z" 
-                    fill="var(--color-accent)" 
-                    transform="translate(188, 274) scale(1.0)" />
-            </g>
+          <g>
+            <polygon points="175,200 225,200 215,250 185,250" fill="var(--color-secondary)" stroke="var(--color-accent)" strokeWidth="2.5" />
+            <line x1="200" y1="205" x2="200" y2="245" stroke="var(--color-accent)" strokeWidth="3" />
+            <line x1="185" y1="245" x2="200" y2="215" stroke="var(--color-accent)" strokeWidth="2.5" />
+            <line x1="215" y1="245" x2="200" y2="215" stroke="var(--color-accent)" strokeWidth="2.5" />
+            <circle cx="200" cy="207" r="4.5" fill="#fff" filter="url(#visorGlow)" />
           </g>
+        );
+      } else if (subfaction === "식음료" || subfaction === "가공식품") {
+        // Grain sheaf emblem
+        return (
+          <g>
+            <circle cx="200" cy="222" r="16" fill="none" stroke="var(--color-accent)" strokeWidth="2" />
+            <path d="M198 234 Q193 218 200 210 Q207 218 202 234" fill="var(--color-accent)" />
+            <circle cx="200" cy="212" r="2.5" fill="var(--color-primary)" />
+          </g>
+        );
+      } else if (subfaction === "지수형") {
+        return (
+          <g>
+            <rect x="188" y="210" width="24" height="24" fill="none" stroke="var(--color-accent)" strokeWidth="3" />
+            <rect x="194" y="216" width="12" height="12" fill="none" stroke="var(--color-secondary)" strokeWidth="2" />
+          </g>
+        );
+      }
+      
+      // Generic Subfaction Emblem (Cross Star)
+      return (
+        <polygon points="200,212 205,222 215,222 207,228 210,238 200,232 190,238 193,228 185,222 195,222" fill="var(--color-secondary)" stroke="var(--color-accent)" strokeWidth="1.5" />
+      );
+    }
+
+    // React SVG Dominant Accents
+    function DominantAccent({ dominantStat }) {
+      if (dominantStat === "HP") {
+        return (
+          <g className="pulse-heart">
+            <path d="M12,5 C10.5,3.5 8,3.5 6.5,5 C5,6.5 5,9 6.5,10.5 L12,16 L17.5,10.5 C19,9 19,6.5 17.5,5 C16,3.5 13.5,3.5 12,5 Z" 
+                  fill="var(--color-accent)" 
+                  transform="translate(188, 244) scale(1.0)" />
+          </g>
+        );
+      } else if (dominantStat === "DEF") {
+        // Shield Accent
+        return (
+          <polygon points="187,252 213,252 219,267 200,277 181,267" fill="var(--color-accent)" filter="url(#visorGlow)" />
+        );
+      } else if (dominantStat === "CRIT") {
+        // Eyepatch Accent over one eye
+        return (
+          <g>
+            <line x1="184" y1="120" x2="204" y2="135" stroke="var(--color-accent)" strokeWidth="2.5" filter="url(#visorGlow)" />
+            <circle cx="194" cy="127" r="4.5" fill="var(--color-accent)" />
+          </g>
+        );
+      } else if (dominantStat === "ATK") {
+        // Sword Accent on back
+        return (
+          <g>
+            <line x1="140" y1="280" x2="260" y2="100" stroke="var(--color-accent)" strokeWidth="3" filter="url(#visorGlow)" />
+            <line x1="230" y1="130" x2="245" y2="145" stroke="var(--color-secondary)" strokeWidth="4" />
+          </g>
+        );
+      } else if (dominantStat === "SPD") {
+        // Energy Wings Accent on sides
+        return (
+          <g>
+            <path d="M150 170 Q95 130 85 190 Q120 200 160 190 Z" fill="var(--color-accent)" filter="url(#visorGlow)" opacity="0.8" />
+            <path d="M250 170 Q305 130 315 190 Q280 200 240 190 Z" fill="var(--color-accent)" filter="url(#visorGlow)" opacity="0.8" />
+          </g>
+        );
+      } else if (dominantStat === "REGEN") {
+        // Holy droplet Accent
+        return (
+          <path d="M200 252 C194 252 190 257 190 262 C190 268 200 277 200 277 C200 277 210 268 210 262 C210 257 206 252 200 252 Z" fill="var(--color-accent)" filter="url(#visorGlow)" />
         );
       }
       return null;
@@ -1070,8 +2592,8 @@
         "--color-primary": primaryColor,
         "--color-secondary": secondaryColor,
         "--color-accent": accentColor,
-        "--color-primary-glow": `${primaryColor}33`, /* opacity 0.2 */
-        "--color-accent-glow": `${accentColor}26`,  /* opacity 0.15 */
+        "--color-primary-glow": `${primaryColor}26`, /* opacity 0.15 */
+        "--color-accent-glow": `${accentColor}1a`,  /* opacity 0.1 */
       };
 
       const renderStars = () => {
@@ -1083,7 +2605,7 @@
       };
 
       return (
-        <div className="card-container" style={cardStyle}>
+        <div className={`card-container ${rarityFrame}`} style={cardStyle}>
           {/* Swapped Text Layout: Race MAIN, Ticker SUB-MAIN */}
           <div className="card-header">
             <div className="title-section">
@@ -1126,6 +2648,12 @@
                 size={size} 
                 aura={aura} 
               />
+
+              {/* Subfaction Emblems in SVG */}
+              <SubfactionEmblem subfaction={spec.subfaction} />
+
+              {/* Dominant Stat Accent symbols */}
+              <DominantAccent dominantStat={dominantStat} />
             </svg>
           </div>
 
@@ -1223,13 +2751,14 @@
       );
     }
 
-    // App view rendering 3 cards side-by-side
+    // App view rendering all 12 cards in a grid
     function App() {
+      const tickers = ["JPM", "NVDA", "LLY", "RIVN", "KO", "GE", "XOM", "FCX", "SEG", "NEE", "META", "SPY"];
       return (
         <div className="compare-container">
-          <CharacterCard spec={portfolioSpecs.JPM} />
-          <CharacterCard spec={portfolioSpecs.NVDA} />
-          <CharacterCard spec={portfolioSpecs.XOM} />
+          {tickers.map(ticker => (
+            <CharacterCard key={ticker} spec={portfolioSpecs[ticker]} />
+          ))}
         </div>
       );
     }

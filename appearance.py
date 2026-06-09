@@ -285,12 +285,17 @@ def main():
     portfolio = [
         ("AAPL", 10),
         ("JPM", 5),
-        ("RIVN", 8),
-        ("SPY", 3),
-        ("SEG", 20),
         ("NVDA", 10),
+        ("LLY", 2),
+        ("RIVN", 8),
         ("KO", 15),
-        ("XOM", 12)
+        ("GE", 6),
+        ("XOM", 12),
+        ("FCX", 18),
+        ("SEG", 20),
+        ("NEE", 14),
+        ("META", 4),
+        ("SPY", 3)
     ]
     
     # Run 2c Synthesis
