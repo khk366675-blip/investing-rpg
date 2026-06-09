@@ -1,0 +1,625 @@
+{
+  "build_date": "2026-06-09",
+  "filter_stats": {
+    "debtToEquity": {
+      "dropped_null": 50,
+      "dropped_sanity": 3
+    },
+    "currentRatio": {
+      "dropped_null": 20,
+      "dropped_sanity": 0
+    },
+    "returnOnEquity": {
+      "dropped_null": 32,
+      "dropped_sanity": 3
+    },
+    "operatingMargins": {
+      "dropped_null": 0,
+      "dropped_sanity": 0
+    },
+    "profitMargins": {
+      "dropped_null": 0,
+      "dropped_sanity": 0
+    },
+    "revenueGrowth": {
+      "dropped_null": 0,
+      "dropped_sanity": 0
+    }
+  },
+  "benchmarks": {
+    "Technology": {
+      "N": 82,
+      "confidence": "OK",
+      "indicators": {
+        "debtToEquity": {
+          "p10": 0.062015,
+          "p50": 0.551275,
+          "p90": 2.258455,
+          "coverage_pct": 92.68,
+          "total_valid": 76,
+          "status": "OK"
+        },
+        "currentRatio": {
+          "p10": 0.7999,
+          "p50": 1.4620000000000002,
+          "p90": 3.0476,
+          "coverage_pct": 100.0,
+          "total_valid": 82,
+          "status": "OK"
+        },
+        "returnOnEquity": {
+          "p10": 0.055009998500000004,
+          "p50": 0.23798998999999998,
+          "p90": 0.903994975,
+          "coverage_pct": 92.68,
+          "total_valid": 76,
+          "status": "OK"
+        },
+        "operatingMargins": {
+          "p10": 0.07172999999999999,
+          "p50": 0.220375005,
+          "p90": 0.463117997,
+          "coverage_pct": 100.0,
+          "total_valid": 82,
+          "status": "OK"
+        },
+        "profitMargins": {
+          "p10": 0.0472070021,
+          "p50": 0.18052000499999998,
+          "p90": 0.38051499800000016,
+          "coverage_pct": 100.0,
+          "total_valid": 82,
+          "status": "OK"
+        },
+        "revenueGrowth": {
+          "p10": 0.0615,
+          "p50": 0.1835,
+          "p90": 0.5735000000000006,
+          "coverage_pct": 100.0,
+          "total_valid": 82,
+          "status": "OK"
+        }
+      }
+    },
+    "Energy": {
+      "N": 21,
+      "confidence": "저신뢰",
+      "indicators": {
+        "debtToEquity": {
+          "p10": 0.20815999999999998,
+          "p50": 0.42664,
+          "p90": 1.49644,
+          "coverage_pct": 100.0,
+          "total_valid": 21,
+          "status": "OK"
+        },
+        "currentRatio": {
+          "p10": 0.658,
+          "p50": 1.111,
+          "p90": 2.083,
+          "coverage_pct": 100.0,
+          "total_valid": 21,
+          "status": "OK"
+        },
+        "returnOnEquity": {
+          "p10": 0.06638,
+          "p50": 0.15178001,
+          "p90": 0.27458,
+          "coverage_pct": 100.0,
+          "total_valid": 21,
+          "status": "OK"
+        },
+        "operatingMargins": {
+          "p10": 0.0579,
+          "p50": 0.1492,
+          "p90": 0.38487998,
+          "coverage_pct": 100.0,
+          "total_valid": 21,
+          "status": "OK"
+        },
+        "profitMargins": {
+          "p10": 0.03407,
+          "p50": 0.12331,
+          "p90": 0.24906999,
+          "coverage_pct": 100.0,
+          "total_valid": 21,
+          "status": "OK"
+        },
+        "revenueGrowth": {
+          "p10": -0.083,
+          "p50": 0.042,
+          "p90": 0.208,
+          "coverage_pct": 100.0,
+          "total_valid": 21,
+          "status": "OK"
+        }
+      }
+    },
+    "Industrials": {
+      "N": 75,
+      "confidence": "OK",
+      "indicators": {
+        "debtToEquity": {
+          "p10": 0.244861,
+          "p50": 0.76538,
+          "p90": 2.2864649999999997,
+          "coverage_pct": 93.33,
+          "total_valid": 70,
+          "status": "OK"
+        },
+        "currentRatio": {
+          "p10": 0.8382,
+          "p50": 1.3065,
+          "p90": 2.5511000000000004,
+          "coverage_pct": 98.67,
+          "total_valid": 74,
+          "status": "OK"
+        },
+        "returnOnEquity": {
+          "p10": 0.092495992,
+          "p50": 0.23331,
+          "p90": 0.517236,
+          "coverage_pct": 92.0,
+          "total_valid": 69,
+          "status": "OK"
+        },
+        "operatingMargins": {
+          "p10": 0.0469360008,
+          "p50": 0.16364999,
+          "p90": 0.26048200000000005,
+          "coverage_pct": 100.0,
+          "total_valid": 75,
+          "status": "OK"
+        },
+        "profitMargins": {
+          "p10": 0.03966,
+          "p50": 0.10994001,
+          "p90": 0.20178200000000002,
+          "coverage_pct": 100.0,
+          "total_valid": 75,
+          "status": "OK"
+        },
+        "revenueGrowth": {
+          "p10": -0.003999999999999997,
+          "p50": 0.076,
+          "p90": 0.21200000000000022,
+          "coverage_pct": 100.0,
+          "total_valid": 75,
+          "status": "OK"
+        }
+      }
+    },
+    "Real Estate": {
+      "N": 31,
+      "confidence": "OK",
+      "indicators": {
+        "debtToEquity": {
+          "p10": 0.599725,
+          "p50": 0.95387,
+          "p90": 1.7767090000000005,
+          "coverage_pct": 90.32,
+          "total_valid": 28,
+          "status": "OK"
+        },
+        "currentRatio": {
+          "p10": 0.188,
+          "p50": 0.689,
+          "p90": 2.062,
+          "coverage_pct": 100.0,
+          "total_valid": 31,
+          "status": "OK"
+        },
+        "returnOnEquity": {
+          "p10": 0.026019999300000003,
+          "p50": 0.074235,
+          "p90": 0.16970400000000002,
+          "coverage_pct": 90.32,
+          "total_valid": 28,
+          "status": "OK"
+        },
+        "operatingMargins": {
+          "p10": 0.08975001,
+          "p50": 0.26567,
+          "p90": 0.46032003,
+          "coverage_pct": 100.0,
+          "total_valid": 31,
+          "status": "OK"
+        },
+        "profitMargins": {
+          "p10": 0.03758,
+          "p50": 0.24486999,
+          "p90": 0.39061,
+          "coverage_pct": 100.0,
+          "total_valid": 31,
+          "status": "OK"
+        },
+        "revenueGrowth": {
+          "p10": -0.005,
+          "p50": 0.064,
+          "p90": 0.216,
+          "coverage_pct": 100.0,
+          "total_valid": 31,
+          "status": "OK"
+        }
+      }
+    },
+    "Basic Materials": {
+      "N": 20,
+      "confidence": "저신뢰",
+      "indicators": {
+        "debtToEquity": {
+          "p10": 0.19436699999999998,
+          "p50": 0.4927,
+          "p90": 1.1954370000000003,
+          "coverage_pct": 100.0,
+          "total_valid": 20,
+          "status": "OK"
+        },
+        "currentRatio": {
+          "p10": 0.9782,
+          "p50": 1.7285,
+          "p90": 2.9239,
+          "coverage_pct": 100.0,
+          "total_valid": 20,
+          "status": "OK"
+        },
+        "returnOnEquity": {
+          "p10": -0.022388999799999997,
+          "p50": 0.129055,
+          "p90": 0.259788,
+          "coverage_pct": 100.0,
+          "total_valid": 20,
+          "status": "OK"
+        },
+        "operatingMargins": {
+          "p10": 0.007129000000000002,
+          "p50": 0.13982,
+          "p90": 0.31323300000000004,
+          "coverage_pct": 100.0,
+          "total_valid": 20,
+          "status": "OK"
+        },
+        "profitMargins": {
+          "p10": -0.028411999799999997,
+          "p50": 0.097385,
+          "p90": 0.24747599100000015,
+          "coverage_pct": 100.0,
+          "total_valid": 20,
+          "status": "OK"
+        },
+        "revenueGrowth": {
+          "p10": -0.03849999999999999,
+          "p50": 0.0895,
+          "p90": 0.22440000000000015,
+          "coverage_pct": 100.0,
+          "total_valid": 20,
+          "status": "OK"
+        }
+      }
+    },
+    "Financial Services": {
+      "N": 70,
+      "confidence": "OK",
+      "indicators": {
+        "debtToEquity": {
+          "p10": 0.14829,
+          "p50": 0.5618,
+          "p90": 1.77847,
+          "coverage_pct": 72.86,
+          "total_valid": 51,
+          "status": "OK"
+        },
+        "currentRatio": {
+          "p10": 0.386,
+          "p50": 1.0535,
+          "p90": 2.1653000000000002,
+          "coverage_pct": 74.29,
+          "total_valid": 52,
+          "status": "OK"
+        },
+        "returnOnEquity": {
+          "p10": 0.0771100008,
+          "p50": 0.14548,
+          "p90": 0.3511580000000001,
+          "coverage_pct": 98.57,
+          "total_valid": 69,
+          "status": "OK"
+        },
+        "operatingMargins": {
+          "p10": 0.11840200000000001,
+          "p50": 0.29683,
+          "p90": 0.48496100200000003,
+          "coverage_pct": 100.0,
+          "total_valid": 70,
+          "status": "OK"
+        },
+        "profitMargins": {
+          "p10": 0.08870900000000001,
+          "p50": 0.213105,
+          "p90": 0.36520802100000005,
+          "coverage_pct": 100.0,
+          "total_valid": 70,
+          "status": "OK"
+        },
+        "revenueGrowth": {
+          "p10": 0.006200000000000014,
+          "p50": 0.0885,
+          "p90": 0.27090000000000003,
+          "coverage_pct": 100.0,
+          "total_valid": 70,
+          "status": "OK"
+        }
+      }
+    },
+    "Utilities": {
+      "N": 31,
+      "confidence": "OK",
+      "indicators": {
+        "debtToEquity": {
+          "p10": 1.06177,
+          "p50": 1.61495,
+          "p90": 2.26101,
+          "coverage_pct": 100.0,
+          "total_valid": 31,
+          "status": "OK"
+        },
+        "currentRatio": {
+          "p10": 0.526,
+          "p50": 0.77,
+          "p90": 1.189,
+          "coverage_pct": 100.0,
+          "total_valid": 31,
+          "status": "OK"
+        },
+        "returnOnEquity": {
+          "p10": 0.08316,
+          "p50": 0.09787,
+          "p90": 0.13441,
+          "coverage_pct": 100.0,
+          "total_valid": 31,
+          "status": "OK"
+        },
+        "operatingMargins": {
+          "p10": 0.18155001,
+          "p50": 0.24872999,
+          "p90": 0.30616,
+          "coverage_pct": 100.0,
+          "total_valid": 31,
+          "status": "OK"
+        },
+        "profitMargins": {
+          "p10": 0.10819,
+          "p50": 0.14097999,
+          "p90": 0.18583,
+          "coverage_pct": 100.0,
+          "total_valid": 31,
+          "status": "OK"
+        },
+        "revenueGrowth": {
+          "p10": 0.029,
+          "p50": 0.09,
+          "p90": 0.195,
+          "coverage_pct": 100.0,
+          "total_valid": 31,
+          "status": "OK"
+        }
+      }
+    },
+    "Communication Services": {
+      "N": 24,
+      "confidence": "저신뢰",
+      "indicators": {
+        "debtToEquity": {
+          "p10": 0.22241200000000003,
+          "p50": 0.760635,
+          "p90": 3.872381999999998,
+          "coverage_pct": 100.0,
+          "total_valid": 24,
+          "status": "OK"
+        },
+        "currentRatio": {
+          "p10": 0.6517000000000001,
+          "p50": 1.1680000000000001,
+          "p90": 2.7315999999999994,
+          "coverage_pct": 100.0,
+          "total_valid": 24,
+          "status": "OK"
+        },
+        "returnOnEquity": {
+          "p10": -0.03701700218999999,
+          "p50": 0.152,
+          "p90": 0.38884997,
+          "coverage_pct": 100.0,
+          "total_valid": 24,
+          "status": "OK"
+        },
+        "operatingMargins": {
+          "p10": 0.08686099300000001,
+          "p50": 0.21286000500000002,
+          "p90": 0.36121,
+          "coverage_pct": 100.0,
+          "total_valid": 24,
+          "status": "OK"
+        },
+        "profitMargins": {
+          "p10": -0.037609,
+          "p50": 0.117119998,
+          "p90": 0.363944,
+          "coverage_pct": 100.0,
+          "total_valid": 24,
+          "status": "OK"
+        },
+        "revenueGrowth": {
+          "p10": -0.03939999999999999,
+          "p50": 0.088,
+          "p90": 0.30939999999999995,
+          "coverage_pct": 100.0,
+          "total_valid": 24,
+          "status": "OK"
+        }
+      }
+    },
+    "Consumer Cyclical": {
+      "N": 54,
+      "confidence": "OK",
+      "indicators": {
+        "debtToEquity": {
+          "p10": 0.282064,
+          "p50": 1.21351,
+          "p90": 5.5146160000000055,
+          "coverage_pct": 79.63,
+          "total_valid": 43,
+          "status": "OK"
+        },
+        "currentRatio": {
+          "p10": 0.6194000000000001,
+          "p50": 1.195,
+          "p90": 3.4028000000000014,
+          "coverage_pct": 100.0,
+          "total_valid": 54,
+          "status": "OK"
+        },
+        "returnOnEquity": {
+          "p10": 0.024933999600000003,
+          "p50": 0.30857,
+          "p90": 0.6076560400000001,
+          "coverage_pct": 79.63,
+          "total_valid": 43,
+          "status": "OK"
+        },
+        "operatingMargins": {
+          "p10": 0.0505839994,
+          "p50": 0.12265000000000001,
+          "p90": 0.25949300000000003,
+          "coverage_pct": 100.0,
+          "total_valid": 54,
+          "status": "OK"
+        },
+        "profitMargins": {
+          "p10": 0.01264700015,
+          "p50": 0.090084998,
+          "p90": 0.203073007,
+          "coverage_pct": 100.0,
+          "total_valid": 54,
+          "status": "OK"
+        },
+        "revenueGrowth": {
+          "p10": 0.0016000000000000016,
+          "p50": 0.095,
+          "p90": 0.20270000000000002,
+          "coverage_pct": 100.0,
+          "total_valid": 54,
+          "status": "OK"
+        }
+      }
+    },
+    "Healthcare": {
+      "N": 59,
+      "confidence": "OK",
+      "indicators": {
+        "debtToEquity": {
+          "p10": 0.103548,
+          "p50": 0.71599,
+          "p90": 2.169778000000003,
+          "coverage_pct": 89.83,
+          "total_valid": 53,
+          "status": "OK"
+        },
+        "currentRatio": {
+          "p10": 0.8623999999999999,
+          "p50": 1.488,
+          "p90": 3.276600000000002,
+          "coverage_pct": 98.31,
+          "total_valid": 58,
+          "status": "OK"
+        },
+        "returnOnEquity": {
+          "p10": 0.029652,
+          "p50": 0.142364995,
+          "p90": 0.6043160000000006,
+          "coverage_pct": 91.53,
+          "total_valid": 54,
+          "status": "OK"
+        },
+        "operatingMargins": {
+          "p10": 0.03867400000000001,
+          "p50": 0.17824,
+          "p90": 0.34106198400000004,
+          "coverage_pct": 100.0,
+          "total_valid": 59,
+          "status": "OK"
+        },
+        "profitMargins": {
+          "p10": 0.007024000000000001,
+          "p50": 0.118310004,
+          "p90": 0.280584,
+          "coverage_pct": 100.0,
+          "total_valid": 59,
+          "status": "OK"
+        },
+        "revenueGrowth": {
+          "p10": 0.026,
+          "p50": 0.073,
+          "p90": 0.21400000000000005,
+          "coverage_pct": 100.0,
+          "total_valid": 59,
+          "status": "OK"
+        }
+      }
+    },
+    "Consumer Defensive": {
+      "N": 35,
+      "confidence": "OK",
+      "indicators": {
+        "debtToEquity": {
+          "p10": 0.46541000000000005,
+          "p50": 0.915135,
+          "p90": 3.5862130000000025,
+          "coverage_pct": 91.43,
+          "total_valid": 32,
+          "status": "OK"
+        },
+        "currentRatio": {
+          "p10": 0.6642,
+          "p50": 1.025,
+          "p90": 1.8948,
+          "coverage_pct": 100.0,
+          "total_valid": 35,
+          "status": "OK"
+        },
+        "returnOnEquity": {
+          "p10": -0.054051999999999996,
+          "p50": 0.18378,
+          "p90": 0.43828302,
+          "coverage_pct": 91.43,
+          "total_valid": 32,
+          "status": "OK"
+        },
+        "operatingMargins": {
+          "p10": 0.0365320012,
+          "p50": 0.16961999,
+          "p90": 0.29285400000000006,
+          "coverage_pct": 100.0,
+          "total_valid": 35,
+          "status": "OK"
+        },
+        "profitMargins": {
+          "p10": -0.011579999999999995,
+          "p50": 0.06638,
+          "p90": 0.231134,
+          "coverage_pct": 100.0,
+          "total_valid": 35,
+          "status": "OK"
+        },
+        "revenueGrowth": {
+          "p10": -0.010999999999999992,
+          "p50": 0.047,
+          "p90": 0.14860000000000007,
+          "coverage_pct": 100.0,
+          "total_valid": 35,
+          "status": "OK"
+        }
+      }
+    }
+  }
+}
