@@ -158,8 +158,14 @@ def synthesize_portfolio_stats(portfolio: list, benchmarks_db: dict) -> dict:
     results = {}
     positions = []
     
-    # Pre-load ticker info and prices
+    # 1. Aggregate duplicate positions (Step 2c)
+    aggregated = {}
     for ticker, shares in portfolio:
+        aggregated[ticker] = aggregated.get(ticker, 0) + shares
+    portfolio_agg = list(aggregated.items())
+    
+    # Pre-load ticker info and prices
+    for ticker, shares in portfolio_agg:
         info = get_ticker_info(ticker)
         if not info:
             print(f"Warning: Could not find cache info for {ticker}.")
@@ -181,8 +187,9 @@ def synthesize_portfolio_stats(portfolio: list, benchmarks_db: dict) -> dict:
     if not positions:
         return {}
         
-    # 1. Personalization Axis: Calculate HP (requires full portfolio values)
+    # 1. Personalization Axis & Level Multipliers (requires full portfolio values) (Step 2c)
     hp_map = calculate_portfolio_hp(positions)
+    lvl_mult_map = calculate_portfolio_lvl_mults(positions)
     
     # 2. Ticker Axis: Calculate stats for each ticker
     for pos in positions:
@@ -193,6 +200,9 @@ def synthesize_portfolio_stats(portfolio: list, benchmarks_db: dict) -> dict:
         
         asset_type = classify_asset_type(info)
         sector = info.get("sector")
+        
+        # Level multiplier (Step 2c)
+        lvl_mult, lvl_norm, lvl_note = lvl_mult_map[ticker]
         
         ticker_stats = {}
         provenance = {}
@@ -523,6 +533,22 @@ def synthesize_portfolio_stats(portfolio: list, benchmarks_db: dict) -> dict:
                 "estimated": est_sk,
                 "note": sk_note
             }
+        # Apply Level Multiplier to stock-axis stats (Step 2c)
+        for stat_name in ["HP", "ATK", "DEF", "SPD", "CRIT", "REGEN", "숙련"]:
+            prov = provenance[stat_name]
+            base_val = prov["value"]
+            if stat_name == "HP":
+                prov["base_value"] = base_val
+                prov["lvl_mult"] = 1.0
+                prov["final_value"] = base_val
+                prov["value"] = base_val
+            else:
+                final_val = max(10, min(1000, int(round(base_val * lvl_mult))))
+                prov["base_value"] = base_val
+                prov["lvl_mult"] = round(lvl_mult, 4)
+                prov["final_value"] = final_val
+                prov["value"] = final_val
+                ticker_stats[stat_name] = final_val
             
         results[ticker] = {
             "asset_type": asset_type,
@@ -563,6 +589,37 @@ def calculate_portfolio_hp(positions: list) -> dict:
         
     return results
 
+def calculate_portfolio_lvl_mults(positions: list) -> dict:
+    """Calculate portfolio-relative level multipliers based on position values."""
+    values = {p["ticker"]: p["price"] * p["shares"] for p in positions}
+    
+    if len(positions) == 1:
+        ticker = positions[0]["ticker"]
+        # Fallback for single position (or min == max): lvl_norm = 0.5
+        # LVL_MULT = 0.4 + lvl_norm * 0.6 = 0.4 + 0.5 * 0.6 = 0.70
+        return {ticker: (0.70, 0.5, "Single position fallback (LVL_MULT=0.7000)")}
+        
+    min_val = min(values.values())
+    max_val = max(values.values())
+    
+    results = {}
+    for ticker, val in values.items():
+        val_clamped = max(0.01, val)
+        min_clamped = max(0.01, min_val)
+        max_clamped = max(0.01, max_val)
+        
+        if min_clamped == max_clamped:
+            lvl_norm = 0.5
+            note = "All positions have identical values (LVL_MULT=0.7000)"
+        else:
+            lvl_norm = (math.log(val_clamped) - math.log(min_clamped)) / (math.log(max_clamped) - math.log(min_clamped))
+            note = f"Log-scaled level norm: {lvl_norm:.4f} (Portfolio Range: {math.log(min_clamped):.4f} - {math.log(max_clamped):.4f})"
+            
+        lvl_mult = 0.4 + lvl_norm * 0.6
+        results[ticker] = (lvl_mult, lvl_norm, note)
+        
+    return results
+
 def scale_beta_to_spd(beta: float) -> int:
     """Scale absolute beta to SPD [10, 1000]."""
     if beta <= 0:
@@ -586,15 +643,15 @@ def print_synthesis_report(results: dict):
         print(f"| {stats['HP']} | {stats['ATK']} | {stats['DEF']} | {stats['SPD']} | {stats['CRIT']} | {stats['REGEN']} | {stats['숙련']} |")
         
         print("\n**[ Provenance Trail (원천 데이터 검증) ]**")
-        print("| Stat | Value | Axis | Source Metric | Raw Value | Sector Percentile | Estimated | Note |")
-        print("| --- | --- | --- | --- | --- | --- | --- | --- |")
+        print("| Stat | Value | Base Value | Lvl Mult | Axis | Source Metric | Raw Value | Sector Percentile | Estimated | Note |")
+        print("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |")
         for stat_name in ["HP", "ATK", "DEF", "SPD", "CRIT", "REGEN", "숙련"]:
             prov = data["provenance"][stat_name]
             raw_val_str = str(prov["raw_value"])
             if len(raw_val_str) > 30:
                 raw_val_str = raw_val_str[:27] + "..."
             pct_str = f"{prov['sector_percentile']:.4f}" if isinstance(prov['sector_percentile'], float) else str(prov['sector_percentile'])
-            print(f"| {stat_name} | {prov['value']} | {prov['axis']} | {prov['source_metric']} | {raw_val_str} | {pct_str} | {prov['estimated']} | {prov['note']} |")
+            print(f"| {stat_name} | {prov['value']} | {prov.get('base_value', prov['value'])} | {prov.get('lvl_mult', 1.0):.4f} | {prov['axis']} | {prov['source_metric']} | {raw_val_str} | {pct_str} | {prov['estimated']} | {prov['note']} |")
 
 def main():
     benchmarks_db = load_benchmarks()
@@ -623,45 +680,66 @@ def main():
                 break
     print(f"Result: {'SUCCESS (100% 동일)' if det_match else 'FAIL (불일치 발생)'}")
     
-    # Personalization test: AAPL 10 -> 100
-    print("\n### 3. HP 개인화 검증 (AAPL 수량 변경: 10 -> 100)")
-    # We use a modified base portfolio for personalization check where JPM is set to 20 shares
-    # so that AAPL(10) is not the maximum position, letting its HP vary.
-    portfolio_base_test = [
-        ("AAPL", 10),
+    # 1. 밸런스 검증 (고가주 1주 vs 저가주 N주)
+    print("\n### 3. 밸런스 검증 (AAPL 1주 vs SEG 12주)")
+    # We include anchors so that the range is not extremely narrow, proving that their LVL_MULTs are close.
+    portfolio_bal = [
+        ("AAPL", 1),   # Value ~ $301
+        ("SEG", 12),   # Value ~ $285
+        ("JPM", 10),   # Max anchor ~ $3,111
+        ("RIVN", 2)    # Min anchor ~ $33
+    ]
+    res_bal = synthesize_portfolio_stats(portfolio_bal, benchmarks_db)
+    aapl_mult = res_bal["AAPL"]["provenance"]["ATK"]["lvl_mult"]
+    seg_mult = res_bal["SEG"]["provenance"]["ATK"]["lvl_mult"]
+    print(f"AAPL (1 shares)  Value: ${res_bal['AAPL']['value']:.2f} -> LVL_MULT: {aapl_mult:.4f}")
+    print(f"SEG (12 shares) Value: ${res_bal['SEG']['value']:.2f} -> LVL_MULT: {seg_mult:.4f}")
+    print(f"Difference: {abs(aapl_mult - seg_mult):.4f}")
+    
+    # 2. 합산 검증
+    print("\n### 4. 합산 검증 ([(AAPL, 1), (AAPL, 2), (JPM, 5)])")
+    portfolio_dup = [
+        ("AAPL", 1),
+        ("AAPL", 2),
+        ("JPM", 5)
+    ]
+    res_dup = synthesize_portfolio_stats(portfolio_dup, benchmarks_db)
+    print(f"Aggregated Keys: {list(res_dup.keys())}")
+    for ticker in res_dup:
+        print(f"Ticker: {ticker} -> Aggregated Shares: {res_dup[ticker]['shares']}")
+        
+    # 3. 동일종목 다른수량 검증 (AAPL 1주 vs 100주)
+    print("\n### 5. 동일종목 다른수량 검증 (AAPL 1주 vs 100주)")
+    # We set JPM to 20 shares so AAPL(1) is not the maximum, and AAPL(100) becomes the maximum.
+    portfolio_base = [
+        ("AAPL", 1),
         ("JPM", 20),
         ("RIVN", 8),
         ("SPY", 3),
         ("SEG", 20)
     ]
-    portfolio_alt_test = [
+    portfolio_alt = [
         ("AAPL", 100),
         ("JPM", 20),
         ("RIVN", 8),
         ("SPY", 3),
         ("SEG", 20)
     ]
-    results_base_test = synthesize_portfolio_stats(portfolio_base_test, benchmarks_db)
-    results_alt_test = synthesize_portfolio_stats(portfolio_alt_test, benchmarks_db)
+    res_base = synthesize_portfolio_stats(portfolio_base, benchmarks_db)
+    res_alt = synthesize_portfolio_stats(portfolio_alt, benchmarks_db)
     
-    print("\n**AAPL 스탯 비교 (수량 10 vs 수량 100)**")
-    print("| Shares | HP | ATK | DEF | SPD | CRIT | REGEN | 숙련 |")
-    print("| --- | --- | --- | --- | --- | --- | --- | --- |")
-    s10 = results_base_test["AAPL"]["stats"]
-    s100 = results_alt_test["AAPL"]["stats"]
-    print(f"| 10 | {s10['HP']} | {s10['ATK']} | {s10['DEF']} | {s10['SPD']} | {s10['CRIT']} | {s10['REGEN']} | {s10['숙련']} |")
-    print(f"| 100 | {s100['HP']} | {s100['ATK']} | {s100['DEF']} | {s100['SPD']} | {s100['CRIT']} | {s100['REGEN']} | {s100['숙련']} |")
-    
-    other_unchanged = True
-    for stat in ["ATK", "DEF", "SPD", "CRIT", "REGEN", "숙련"]:
-        if s10[stat] != s100[stat]:
-            other_unchanged = False
-            
-    print(f"HP 변동 여부: {'SUCCESS (변동됨)' if s10['HP'] != s100['HP'] else 'FAIL (동일함)'}")
-    print(f"기타 6개 스탯 불변 여부: {'SUCCESS (불변)' if other_unchanged else 'FAIL (변동 발생)'}")
+    print("\n**AAPL 1주 vs 100주 스탯 비교**")
+    print("| Shares | HP | ATK | DEF | SPD | CRIT | REGEN | 숙련 | LVL_MULT |")
+    print("| --- | --- | --- | --- | --- | --- | --- | --- | --- |")
+    s1 = res_base["AAPL"]["stats"]
+    s100 = res_alt["AAPL"]["stats"]
+    m1 = res_base["AAPL"]["provenance"]["ATK"]["lvl_mult"]
+    m100 = res_alt["AAPL"]["provenance"]["ATK"]["lvl_mult"]
+    print(f"| 1 | {s1['HP']} | {s1['ATK']} | {s1['DEF']} | {s1['SPD']} | {s1['CRIT']} | {s1['REGEN']} | {s1['숙련']} | {m1:.4f} |")
+    print(f"| 100 | {s100['HP']} | {s100['ATK']} | {s100['DEF']} | {s100['SPD']} | {s100['CRIT']} | {s100['REGEN']} | {s100['숙련']} | {m100:.4f} |")
     
     # List all estimated stats and their reasons
-    print("\n### 4. Estimated = True 스탯 목록 및 사유")
+    print("\n### 6. Estimated = True 스탯 목록 및 사유")
     print("| Ticker | Stat | Value | Fallback Reason |")
     print("| --- | --- | --- | --- |")
     for ticker, data in results.items():
