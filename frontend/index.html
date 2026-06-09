@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Investing RPG - 캐릭터 카드 렌더러 (JPM)</title>
+  <title>Investing RPG - 3종족 카드 비교 렌더러</title>
   
   <!-- React 18 & Babel CDN -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
@@ -16,21 +16,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 
   <style>
-    /* CSS Variables & Palette mapping */
+    /* CSS Variables & Base Styles */
     :root {
-      --bg-gradient: radial-gradient(circle at center, #0f1319 0%, #05070a 100%);
-      --card-bg: linear-gradient(135deg, rgba(20, 25, 38, 0.85) 0%, rgba(10, 12, 18, 0.95) 100%);
-      
-      /* Hex Mapping for Gold, Bronze, Ruby from spec.palette */
-      --color-gold: #ffdf00;
-      --color-gold-glower: rgba(255, 223, 0, 0.35);
-      --color-bronze: #cd7f32;
-      --color-ruby: #e0115f;
-      --color-ruby-glow: rgba(224, 17, 95, 0.5);
-      
+      --bg-gradient: radial-gradient(circle at center, #0e121a 0%, #030508 100%);
+      --card-bg: linear-gradient(135deg, rgba(16, 20, 30, 0.9) 0%, rgba(8, 10, 15, 0.98) 100%);
       --color-text-primary: #f8fafc;
       --color-text-secondary: #94a3b8;
-      --color-border-legendary: linear-gradient(135deg, #ffdf00 0%, #cd7f32 50%, #e0115f 100%);
     }
 
     * {
@@ -47,18 +38,18 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      overflow-x: hidden;
-      padding: 2rem;
+      justify-content: flex-start;
+      overflow-x: auto;
+      padding: 3rem 2rem;
     }
 
     header {
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
       text-align: center;
     }
 
     header h1 {
-      font-size: 2.2rem;
+      font-size: 2.5rem;
       font-weight: 800;
       letter-spacing: -0.05em;
       background: linear-gradient(135deg, #fff 30%, #ffdf00 100%);
@@ -69,13 +60,24 @@
 
     header p {
       color: var(--color-text-secondary);
-      font-size: 0.95rem;
+      font-size: 1rem;
     }
 
-    /* Card Layout & Premium hover translation */
+    /* Container for horizontal card compare render */
+    .compare-container {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    /* Card Container with Dynamic Color Variable Borders */
     .card-container {
-      width: 380px;
-      height: 640px;
+      width: 360px;
+      height: 645px;
       background: var(--card-bg);
       border-radius: 24px;
       padding: 24px;
@@ -83,22 +85,22 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 
-                  0 0 25px rgba(255, 223, 0, 0.15);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 
+                  0 0 20px var(--color-primary-glow);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       cursor: pointer;
     }
 
-    /* Double border effect for Legendary Frame */
+    /* Double border effect for Legendary Frame using color variables */
     .card-container::before {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
       border-radius: 24px;
-      padding: 3px;
-      background: var(--color-border-legendary);
+      padding: 2.5px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 50%, var(--color-accent) 100%);
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
@@ -108,59 +110,74 @@
     .card-container:hover {
       transform: translateY(-12px) scale(1.015);
       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), 
-                  0 0 45px rgba(255, 223, 0, 0.35);
+                  0 0 35px var(--color-primary);
     }
 
-    /* Card Header */
+    /* Swapped Text Layout Header */
     .card-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       z-index: 10;
     }
 
-    .ticker-section {
+    .title-section {
       display: flex;
       flex-direction: column;
+      gap: 4px;
     }
 
-    .ticker-title {
-      font-size: 1.8rem;
+    /* Race name is now MAIN */
+    .race-main-title {
+      font-size: 1.45rem;
       font-weight: 800;
       color: #fff;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
       line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .ticker-sub-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Ticker name is now SUB-MAIN */
+    .ticker-sub-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      text-shadow: 0 0 8px var(--color-primary-glow);
     }
 
     .sector-badge {
-      font-size: 0.75rem;
-      font-weight: 500;
+      font-size: 0.7rem;
+      font-weight: 600;
       color: var(--color-text-secondary);
       background: rgba(255, 255, 255, 0.05);
-      padding: 2px 8px;
-      border-radius: 6px;
-      width: fit-content;
-      margin-top: 4px;
+      padding: 1px 6px;
+      border-radius: 4px;
     }
 
     .rarity-tag {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 800;
-      letter-spacing: 0.15em;
-      color: var(--color-gold);
-      text-shadow: 0 0 8px var(--color-gold-glower);
-      border: 1.5px solid var(--color-gold);
-      padding: 4px 10px;
-      border-radius: 8px;
-      background: rgba(255, 223, 0, 0.08);
+      letter-spacing: 0.12em;
+      color: var(--color-primary);
+      text-shadow: 0 0 8px var(--color-primary-glow);
+      border: 1.5px solid var(--color-primary);
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--color-primary-glow);
     }
 
-    /* Graphic Area */
+    /* Character Graphic Viewport */
     .card-graphic-wrapper {
       width: 100%;
       height: 250px;
-      background: radial-gradient(circle at center, rgba(30, 35, 50, 0.4) 0%, rgba(10, 12, 18, 0.8) 100%);
+      background: radial-gradient(circle at center, rgba(20, 24, 36, 0.5) 0%, rgba(5, 7, 10, 0.9) 100%);
       border-radius: 16px;
       position: relative;
       display: flex;
@@ -170,19 +187,29 @@
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    /* Pulse animation for Ruby heart */
+    /* Glowing Radial Aura using variables */
+    .aura-circle {
+      fill: url(#auraGlow);
+    }
+
+    /* Keyframe Animations */
     @keyframes pulse {
-      0% { transform: scale(1); filter: drop-shadow(0 0 2px var(--color-ruby)); }
-      50% { transform: scale(1.15); filter: drop-shadow(0 0 10px var(--color-ruby)); }
-      100% { transform: scale(1); filter: drop-shadow(0 0 2px var(--color-ruby)); }
+      0% { transform: scale(1); filter: drop-shadow(0 0 2px var(--color-accent)); }
+      50% { transform: scale(1.15); filter: drop-shadow(0 0 10px var(--color-accent)); }
+      100% { transform: scale(1); filter: drop-shadow(0 0 2px var(--color-accent)); }
     }
     
     .pulse-heart {
       animation: pulse 1.8s infinite ease-in-out;
-      transform-origin: 200px 242px; /* Center of the heart */
+      transform-origin: 200px 242px;
     }
 
-    /* Star Level Tier display */
+    .pulse-heart-giant {
+      animation: pulse 1.8s infinite ease-in-out;
+      transform-origin: 200px 282px;
+    }
+
+    /* Level Stars */
     .level-tier-stars {
       display: flex;
       justify-content: center;
@@ -191,31 +218,31 @@
     }
 
     .star-icon {
-      width: 18px;
-      height: 18px;
-      fill: var(--color-gold);
-      filter: drop-shadow(0 0 4px var(--color-gold-glower));
+      width: 16px;
+      height: 16px;
+      fill: var(--color-primary);
+      filter: drop-shadow(0 0 4px var(--color-primary-glow));
     }
 
     /* Stats Panel */
     .stats-panel {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 9px;
       z-index: 10;
     }
 
     .stat-row {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
       position: relative;
     }
 
     .stat-label-container {
       display: flex;
       justify-content: space-between;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 500;
       color: var(--color-text-secondary);
     }
@@ -239,42 +266,41 @@
     /* Stat bar */
     .stat-bar-bg {
       width: 100%;
-      height: 8px;
+      height: 6px;
       background: rgba(255, 255, 255, 0.08);
-      border-radius: 4px;
+      border-radius: 3px;
       overflow: hidden;
       position: relative;
     }
 
     .stat-bar-fill {
       height: 100%;
-      border-radius: 4px;
+      border-radius: 3px;
       background: #475569;
       transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* Dominant Stat HP highlight */
     .stat-row.dominant .stat-highlight {
-      color: var(--color-gold);
-      text-shadow: 0 0 8px var(--color-gold-glower);
+      color: var(--color-primary);
+      text-shadow: 0 0 8px var(--color-primary-glow);
     }
 
     .stat-row.dominant .stat-bar-fill {
-      background: linear-gradient(90deg, var(--color-gold) 0%, var(--color-ruby) 100%);
-      box-shadow: 0 0 10px var(--color-gold-glower);
+      background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+      box-shadow: 0 0 10px var(--color-primary-glow);
     }
 
     /* Estimated badge for DEF */
     .estimated-pill {
       font-size: 0.65rem;
       font-weight: 700;
-      color: var(--color-ruby);
-      background: rgba(224, 17, 95, 0.15);
-      border: 1px solid var(--color-ruby);
-      padding: 0 5px;
+      color: var(--color-accent);
+      background: var(--color-accent-glow);
+      border: 1px solid var(--color-accent);
+      padding: 0 4px;
       border-radius: 4px;
       cursor: help;
-      position: relative;
     }
 
     /* Interactive Provenance Tooltip */
@@ -283,10 +309,10 @@
       top: -245px;
       left: 50%;
       transform: translateX(-50%) translateY(10px);
-      width: 320px;
-      background: rgba(15, 20, 32, 0.95);
-      border: 1.5px solid var(--color-ruby);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 20px var(--color-ruby-glow);
+      width: 310px;
+      background: rgba(10, 14, 24, 0.98);
+      border: 1.5px solid var(--color-accent);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 20px var(--color-accent-glow);
       border-radius: 12px;
       padding: 16px;
       z-index: 100;
@@ -303,7 +329,7 @@
     }
 
     .tooltip-header {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 700;
       color: #fff;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -314,12 +340,12 @@
       align-items: center;
     }
 
-    .tooltip-header span {
+    .tooltip-header span:first-child {
       font-size: 0.7rem;
       padding: 2px 6px;
       border-radius: 4px;
-      background: var(--color-ruby);
-      color: #fff;
+      background: var(--color-accent);
+      color: #000;
       font-weight: 800;
     }
 
@@ -355,7 +381,7 @@
       font-style: italic;
     }
 
-    /* Footer / Name Area */
+    /* Footer Area */
     .card-footer {
       text-align: center;
       display: flex;
@@ -364,19 +390,18 @@
       z-index: 10;
     }
 
-    .card-race-title {
-      font-size: 1.5rem;
-      font-weight: 900;
-      letter-spacing: 0.05em;
+    .card-subfaction-desc {
+      font-size: 0.85rem;
+      font-weight: 600;
       color: var(--color-text-primary);
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+      letter-spacing: 0.05em;
     }
 
-    .card-subfaction-desc {
-      font-size: 0.8rem;
+    .card-type-label {
+      font-size: 0.7rem;
       color: var(--color-text-secondary);
       margin-top: 2px;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.1em;
     }
   </style>
 </head>
@@ -384,167 +409,639 @@
 
   <header>
     <h1>Investing RPG</h1>
-    <p>도형 렌더러 — Step 3b JPM 황금기사단 수직 슬라이스</p>
+    <p>3종족 체형 대비 및 레이아웃 검증 (황금기사단 / 기계종 / 화염거인)</p>
   </header>
 
-  <!-- Mount Point for React -->
+  <!-- Mount Point for React Compare View -->
   <div id="root"></div>
 
   <script type="text/babel">
 
-    // Target JPM AppearanceSpec JSON (directly containing stats and provenance)
-    const jpmSpec = {
-      "ticker": "JPM",
-      "race": "황금기사단",
-      "raceBodyType": "황금기사단_체형",
-      "subfaction": "은행",
-      "sectorLabel": "금융",
-      "palette": {
-        "primary": "Gold",
-        "secondary": "Bronze",
-        "accent": "Ruby"
-      },
-      "size": 0.7869,
-      "aura": 0.6293,
-      "levelTier": 4,
-      "rarityFrame": "legendary",
-      "accents": [
-        "은행_휘장",
-        "심장"
-      ],
-      "dominantStat": "HP",
-      "estimatedBadge": {
-        "enabled": true,
-        "stats": [
-          "DEF"
-        ]
-      },
-      "type": "EQUITY",
-      "stats": {
-        "HP": 789,
-        "ATK": 530,
-        "DEF": 473,
-        "SPD": 262,
-        "CRIT": 205,
-        "REGEN": 217,
-        "숙련": 633
-      },
-      "provenance": {
-        "HP": {
-          "stat": "HP",
-          "value": 789,
-          "axis": "개인화",
-          "source_metric": "shares * price",
-          "raw_value": 1555.5500000000002,
-          "sector": "Financial Services",
-          "sector_percentile": 0.7871,
-          "estimated": false,
-          "note": "Log-scaled value: 7.3496 (Portfolio Range: 4.9032 - 8.0115)",
-          "base_value": 789,
-          "lvl_mult": 1.0,
-          "final_value": 789
+    // Target Tickers AppearanceSpec JSON Data
+    const portfolioSpecs = {
+      "JPM": {
+        "ticker": "JPM",
+        "race": "황금기사단",
+        "raceBodyType": "황금기사단_체형",
+        "subfaction": "은행",
+        "sectorLabel": "금융",
+        "palette": {
+          "primary": "Gold",
+          "secondary": "Bronze",
+          "accent": "Ruby"
         },
-        "ATK": {
-          "stat": "ATK",
-          "value": 530,
-          "axis": "종목",
-          "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
-          "raw_value": {
-            "growth": 0.127,
-            "momentum": 0.6492652157077977
+        "size": 0.7869,
+        "aura": 0.6293,
+        "levelTier": 4,
+        "rarityFrame": "legendary",
+        "accents": [
+          "은행_휘장",
+          "심장"
+        ],
+        "dominantStat": "HP",
+        "estimatedBadge": {
+          "enabled": true,
+          "stats": [
+            "DEF"
+          ]
+        },
+        "type": "EQUITY",
+        "stats": {
+          "HP": 789,
+          "ATK": 530,
+          "DEF": 473,
+          "SPD": 262,
+          "CRIT": 205,
+          "REGEN": 217,
+          "숙련": 633
+        },
+        "provenance": {
+          "HP": {
+            "stat": "HP",
+            "value": 789,
+            "axis": "개인화",
+            "source_metric": "shares * price",
+            "raw_value": 1555.5500000000002,
+            "sector": "Financial Services",
+            "sector_percentile": 0.7871,
+            "estimated": false,
+            "note": "Log-scaled value: 7.3496 (Portfolio Range: 4.9032 - 8.0115)",
+            "base_value": 789,
+            "lvl_mult": 1.0,
+            "final_value": 789
           },
-          "sector": "Financial Services",
-          "sector_percentile": 0.6039,
-          "estimated": false,
-          "note": "Growth score: 0.5844 (raw), 52-week momentum: 0.6493",
-          "base_value": 608,
-          "lvl_mult": 0.8722,
-          "final_value": 530
-        },
-        "DEF": {
-          "stat": "DEF",
-          "value": 473,
-          "axis": "종목",
-          "source_metric": "debtToEquity & currentRatio",
-          "raw_value": null,
-          "sector": "Financial Services",
-          "sector_percentile": 0.5373,
-          "estimated": true,
-          "note": "Financial services fallback. D/E and CurrentRatio missing. Used ROE quality score (0.5373) as proxy.",
-          "base_value": 542,
-          "lvl_mult": 0.8722,
-          "final_value": 473
-        },
-        "SPD": {
-          "stat": "SPD",
-          "value": 262,
-          "axis": "종목",
-          "source_metric": "beta",
-          "raw_value": 1.0,
-          "sector": "Financial Services",
-          "sector_percentile": 0.5,
-          "estimated": false,
-          "note": "Beta: 1.0000",
-          "base_value": 300,
-          "lvl_mult": 0.8722,
-          "final_value": 262
-        },
-        "CRIT": {
-          "stat": "CRIT",
-          "value": 205,
-          "axis": "종목",
-          "source_metric": "spread",
-          "raw_value": 0.2837349168284421,
-          "sector": "Financial Services",
-          "sector_percentile": 0.5,
-          "estimated": false,
-          "note": "Spread: 0.2837",
-          "base_value": 235,
-          "lvl_mult": 0.8722,
-          "final_value": 205
-        },
-        "REGEN": {
-          "stat": "REGEN",
-          "value": 217,
-          "axis": "종목",
-          "source_metric": "dividendYield",
-          "raw_value": 0.019299999999999998,
-          "sector": "Financial Services",
-          "sector_percentile": 0.2412,
-          "estimated": false,
-          "note": "Dividend yield: 1.93%",
-          "base_value": 249,
-          "lvl_mult": 0.8722,
-          "final_value": 217
-        },
-        "숙련": {
-          "stat": "숙련",
-          "value": 633,
-          "axis": "종목",
-          "source_metric": "returnOnEquity, operatingMargins, profitMargins",
-          "raw_value": {
-            "returnOnEquity": 0.16465063,
-            "operatingMargins": 0.44853,
-            "profitMargins": 0.35418
+          "ATK": {
+            "stat": "ATK",
+            "value": 530,
+            "axis": "종목",
+            "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
+            "raw_value": {
+              "growth": 0.127,
+              "momentum": 0.6492652157077977
+            },
+            "sector": "Financial Services",
+            "sector_percentile": 0.6039,
+            "estimated": false,
+            "note": "Growth score: 0.5844 (raw), 52-week momentum: 0.6493",
+            "base_value": 608,
+            "lvl_mult": 0.8722,
+            "final_value": 530
           },
-          "sector": "Financial Services",
-          "sector_percentile": 0.7227,
-          "estimated": false,
-          "note": "Averaged: ROE_score=0.5372815955036514, OpMargin_score=0.7988981050555399, ProfitMargin_score=0.8320249635278446",
-          "base_value": 726,
-          "lvl_mult": 0.8722,
-          "final_value": 633
+          "DEF": {
+            "stat": "DEF",
+            "value": 473,
+            "axis": "종목",
+            "source_metric": "debtToEquity & currentRatio",
+            "raw_value": null,
+            "sector": "Financial Services",
+            "sector_percentile": 0.5373,
+            "estimated": true,
+            "note": "Financial services fallback. D/E and CurrentRatio missing. Used ROE quality score (0.5373) as proxy.",
+            "base_value": 542,
+            "lvl_mult": 0.8722,
+            "final_value": 473
+          },
+          "SPD": {
+            "stat": "SPD",
+            "value": 262,
+            "axis": "종목",
+            "source_metric": "beta",
+            "raw_value": 1.0,
+            "sector": "Financial Services",
+            "sector_percentile": 0.5,
+            "estimated": false,
+            "note": "Beta: 1.0000",
+            "base_value": 300,
+            "lvl_mult": 0.8722,
+            "final_value": 262
+          },
+          "CRIT": {
+            "stat": "CRIT",
+            "value": 205,
+            "axis": "종목",
+            "source_metric": "spread",
+            "raw_value": 0.2837349168284421,
+            "sector": "Financial Services",
+            "sector_percentile": 0.5,
+            "estimated": false,
+            "note": "Spread: 0.2837",
+            "base_value": 235,
+            "lvl_mult": 0.8722,
+            "final_value": 205
+          },
+          "REGEN": {
+            "stat": "REGEN",
+            "value": 217,
+            "axis": "종목",
+            "source_metric": "dividendYield",
+            "raw_value": 0.019299999999999998,
+            "sector": "Financial Services",
+            "sector_percentile": 0.2412,
+            "estimated": false,
+            "note": "Dividend yield: 1.93%",
+            "base_value": 249,
+            "lvl_mult": 0.8722,
+            "final_value": 217
+          },
+          "숙련": {
+            "stat": "숙련",
+            "value": 633,
+            "axis": "종목",
+            "source_metric": "returnOnEquity, operatingMargins, profitMargins",
+            "raw_value": {
+              "returnOnEquity": 0.16465063,
+              "operatingMargins": 0.44853,
+              "profitMargins": 0.35418
+            },
+            "sector": "Financial Services",
+            "sector_percentile": 0.7227,
+            "estimated": false,
+            "note": "Averaged: ROE_score=0.5372815955036514, OpMargin_score=0.7988981050555399, ProfitMargin_score=0.8320249635278446",
+            "base_value": 726,
+            "lvl_mult": 0.8722,
+            "final_value": 633
+          }
+        }
+      },
+      "NVDA": {
+        "ticker": "NVDA",
+        "race": "기계종",
+        "raceBodyType": "기계종_체형",
+        "subfaction": "반도체",
+        "sectorLabel": "테크",
+        "palette": {
+          "primary": "Cyber_Blue",
+          "secondary": "Neon_Purple",
+          "accent": "Cyan"
+        },
+        "size": 0.8818,
+        "aura": 0.9283,
+        "levelTier": 5,
+        "rarityFrame": "legendary",
+        "accents": [
+          "반도체_휘장",
+          "지팡이"
+        ],
+        "dominantStat": "숙련",
+        "estimatedBadge": {
+          "enabled": false,
+          "stats": []
+        },
+        "type": "EQUITY",
+        "stats": {
+          "HP": 883,
+          "ATK": 916,
+          "DEF": 512,
+          "SPD": 786,
+          "CRIT": 601,
+          "REGEN": 10,
+          "숙련": 929
+        },
+        "provenance": {
+          "HP": {
+            "stat": "HP",
+            "value": 883,
+            "axis": "개인화",
+            "source_metric": "shares * price",
+            "raw_value": 2404.1,
+            "sector": "Technology",
+            "sector_percentile": 0.8821,
+            "estimated": false,
+            "note": "Log-scaled value: 7.7849 (Portfolio Range: 4.9032 - 8.0115)",
+            "base_value": 883,
+            "lvl_mult": 1.0,
+            "final_value": 883
+          },
+          "ATK": {
+            "stat": "ATK",
+            "value": 916,
+            "axis": "종목",
+            "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
+            "raw_value": {
+              "growth": 0.44262295,
+              "momentum": 0.8703703666014498
+            },
+            "sector": "Technology",
+            "sector_percentile": 0.9161,
+            "estimated": false,
+            "note": "Growth score: 0.8852 (raw), 52-week momentum: 0.8704",
+            "base_value": 916,
+            "lvl_mult": 1.0,
+            "final_value": 916
+          },
+          "DEF": {
+            "stat": "DEF",
+            "value": 512,
+            "axis": "종목",
+            "source_metric": "debtToEquity & currentRatio",
+            "raw_value": {
+              "debtToEquity_raw": 31.905,
+              "currentRatio_raw": 3.534
+            },
+            "sector": "Technology",
+            "sector_percentile": 0.512,
+            "estimated": false,
+            "note": "Averaged: D/E score = 0.6974, CurrentRatio score = 0.3267",
+            "base_value": 512,
+            "lvl_mult": 1.0,
+            "final_value": 512
+          },
+          "SPD": {
+            "stat": "SPD",
+            "value": 786,
+            "axis": "종목",
+            "source_metric": "beta",
+            "raw_value": 2.022,
+            "sector": "Technology",
+            "sector_percentile": 0.7838,
+            "estimated": false,
+            "note": "Beta: 2.0220",
+            "base_value": 786,
+            "lvl_mult": 1.0,
+            "final_value": 786
+          },
+          "CRIT": {
+            "stat": "CRIT",
+            "value": 601,
+            "axis": "종목",
+            "source_metric": "spread",
+            "raw_value": 0.7423223067883296,
+            "sector": "Technology",
+            "sector_percentile": 0.601,
+            "estimated": false,
+            "note": "Spread: 0.7423",
+            "base_value": 601,
+            "lvl_mult": 1.0,
+            "final_value": 601
+          },
+          "REGEN": {
+            "stat": "REGEN",
+            "value": 10,
+            "axis": "종목",
+            "source_metric": "dividendYield",
+            "raw_value": 0.0003,
+            "sector": "Technology",
+            "sector_percentile": 0.0,
+            "estimated": false,
+            "note": "Dividend yield: 0.03%",
+            "base_value": 10,
+            "lvl_mult": 1.0,
+            "final_value": 10
+          },
+          "숙련": {
+            "stat": "숙련",
+            "value": 929,
+            "axis": "종목",
+            "source_metric": "returnOnEquity, operatingMargins, profitMargins",
+            "raw_value": {
+              "returnOnEquity": 1.228514,
+              "operatingMargins": 0.62002,
+              "profitMargins": 0.55318
+            },
+            "sector": "Technology",
+            "sector_percentile": 0.9283,
+            "estimated": false,
+            "note": "Averaged: ROE_score=1.0, OpMargin_score=0.8929729864294473, ProfitMargin_score=0.8920194645228509",
+            "base_value": 929,
+            "lvl_mult": 1.0,
+            "final_value": 929
+          }
+        }
+      },
+      "XOM": {
+        "ticker": "XOM",
+        "race": "화염거인",
+        "raceBodyType": "화염거인_체형",
+        "subfaction": "에너지 E&P",
+        "sectorLabel": "에너지",
+        "palette": {
+          "primary": "Crimson",
+          "secondary": "Charcoal",
+          "accent": "Fire"
+        },
+        "size": 0.8374,
+        "aura": 0.201,
+        "levelTier": 5,
+        "rarityFrame": "legendary",
+        "accents": [
+          "에너지 E&P_휘장",
+          "심장"
+        ],
+        "dominantStat": "HP",
+        "estimatedBadge": {
+          "enabled": false,
+          "stats": []
+        },
+        "type": "EQUITY",
+        "stats": {
+          "HP": 839,
+          "ATK": 465,
+          "DEF": 626,
+          "SPD": 48,
+          "CRIT": 427,
+          "REGEN": 311,
+          "숙련": 209
+        },
+        "provenance": {
+          "HP": {
+            "stat": "HP",
+            "value": 839,
+            "axis": "개인화",
+            "source_metric": "shares * price",
+            "raw_value": 1821.0,
+            "sector": "Energy",
+            "sector_percentile": 0.8377,
+            "estimated": false,
+            "note": "Log-scaled value: 7.5071 (Portfolio Range: 4.9032 - 8.0115)",
+            "base_value": 839,
+            "lvl_mult": 1.0,
+            "final_value": 839
+          },
+          "ATK": {
+            "stat": "ATK",
+            "value": 465,
+            "axis": "종목",
+            "source_metric": "0.7 * Growth_score + 0.3 * Momentum",
+            "raw_value": {
+              "growth": 0.026,
+              "momentum": 0.6520880361173815
+            },
+            "sector": "Energy",
+            "sector_percentile": 0.5098,
+            "estimated": false,
+            "note": "Growth score: 0.4488 (raw), 52-week momentum: 0.6521",
+            "base_value": 515,
+            "lvl_mult": 0.9026,
+            "final_value": 465
+          },
+          "DEF": {
+            "stat": "DEF",
+            "value": 626,
+            "axis": "종목",
+            "source_metric": "debtToEquity & currentRatio",
+            "raw_value": {
+              "debtToEquity_raw": 18.261,
+              "currentRatio_raw": 1.036
+            },
+            "sector": "Energy",
+            "sector_percentile": 0.6903,
+            "estimated": false,
+            "note": "Averaged: D/E score = 0.9468, CurrentRatio score = 0.4338",
+            "base_value": 693,
+            "lvl_mult": 0.9026,
+            "final_value": 626
+          },
+          "SPD": {
+            "stat": "SPD",
+            "value": 48,
+            "axis": "종목",
+            "source_metric": "beta",
+            "raw_value": 0.149,
+            "sector": "Energy",
+            "sector_percentile": 0.5,
+            "estimated": false,
+            "note": "Beta: 0.1490",
+            "base_value": 53,
+            "lvl_mult": 0.9026,
+            "final_value": 48
+          },
+          "CRIT": {
+            "stat": "CRIT",
+            "value": 427,
+            "axis": "종목",
+            "source_metric": "spread",
+            "raw_value": 0.671657348621245,
+            "sector": "Energy",
+            "sector_percentile": 0.5,
+            "estimated": false,
+            "note": "Spread: 0.6717",
+            "base_value": 473,
+            "lvl_mult": 0.9026,
+            "final_value": 427
+          },
+          "REGEN": {
+            "stat": "REGEN",
+            "value": 311,
+            "axis": "종목",
+            "source_metric": "dividendYield",
+            "raw_value": 0.0271,
+            "sector": "Energy",
+            "sector_percentile": 0.3387,
+            "estimated": false,
+            "note": "Dividend yield: 2.71%",
+            "base_value": 345,
+            "lvl_mult": 0.9026,
+            "final_value": 311
+          },
+          "숙련": {
+            "stat": "숙련",
+            "value": 209,
+            "axis": "종목",
+            "source_metric": "returnOnEquity, operatingMargins, profitMargins",
+            "raw_value": {
+              "returnOnEquity": 0.09873,
+              "operatingMargins": 0.06355,
+              "profitMargins": 0.077649996
+            },
+            "sector": "Energy",
+            "sector_percentile": 0.2239,
+            "estimated": false,
+            "note": "Averaged: ROE_score=0.2515222305009098, OpMargin_score=0.12475355969331872, ProfitMargin_score=0.2953383953384132",
+            "base_value": 232,
+            "lvl_mult": 0.9026,
+            "final_value": 209
+          }
         }
       }
     };
 
-    // React SVG Star Renderer Helper
+    // Color Palette Hex mappings
+    const colorMap = {
+      "Gold": "#ffdf00",
+      "Bronze": "#cd7f32",
+      "Ruby": "#e0115f",
+      
+      "Cyber_Blue": "#00d2ff",
+      "Neon_Purple": "#b026ff",
+      "Cyan": "#00ffff",
+      
+      "Crimson": "#e60000",
+      "Charcoal": "#2b2b2b",
+      "Fire": "#ff5500"
+    };
+
     function Star() {
       return (
         <svg className="star-icon" viewBox="0 0 24 24">
           <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
         </svg>
       );
+    }
+
+    // React SVG Character Silhouette Renderer
+    function CharacterSilhouette({ raceBodyType, size, aura }) {
+      if (raceBodyType === "황금기사단_체형") {
+        // --- 1. 황금기사단 체형 (Heavy Knight): 각진 큰 사각 몸통, 낮고 넓은 비례, 견장 종족 마커 ---
+        return (
+          <g transform={`translate(200, 220) scale(${size}) translate(-200, -200)`}>
+            {/* Helmet Crest */}
+            <path d="M170 100 L200 45 L230 100 Z" fill="var(--color-secondary)" stroke="#8c4800" strokeWidth="2" />
+            
+            {/* Helmet Dome */}
+            <path d="M155 140 C155 80 245 80 245 140 L240 160 L160 160 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3" />
+            
+            {/* Visor Area */}
+            <rect x="168" y="125" width="64" height="22" rx="3" fill="#111" stroke="var(--color-secondary)" strokeWidth="2" />
+            
+            {/* Visor Slit Ruby Glow */}
+            <rect x="174" y="133" width="52" height="5" rx="1.5" fill="var(--color-accent)" filter="url(#visorGlow)" />
+
+            {/* pauldrons (어깨 견장 - 종족 마커) */}
+            {/* Left Pauldron */}
+            <path d="M80 180 C80 135 145 140 145 185 L120 220 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3" />
+            <polygon points="80,180 70,165 95,170" fill="var(--color-secondary)" stroke="#8c4800" strokeWidth="1" />
+            <polygon points="85,195 72,190 92,185" fill="var(--color-secondary)" stroke="#8c4800" strokeWidth="1" />
+
+            {/* Right Pauldron */}
+            <path d="M320 180 C320 135 255 140 255 185 L280 220 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3" />
+            <polygon points="320,180 330,165 305,170" fill="var(--color-secondary)" stroke="#8c4800" strokeWidth="1" />
+            <polygon points="315,195 328,190 308,185" fill="var(--color-secondary)" stroke="#8c4800" strokeWidth="1" />
+
+            {/* Collar Neck Guard */}
+            <path d="M145 160 L255 160 L235 185 L165 185 Z" fill="var(--color-secondary)" stroke="#8c4800" strokeWidth="2" />
+
+            {/* Heavy Breastplate (Trapezoidal body) */}
+            <polygon points="135,185 265,185 285,285 115,285" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4" />
+
+            {/* Segmented Abdomen */}
+            <polygon points="120,285 280,285 272,315 128,315" fill="var(--color-secondary)" stroke="#8c4800" strokeWidth="2.5" />
+            <polygon points="128,315 272,315 260,345 140,345" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
+
+            {/* 은행_휘장 (Coin & Scales Emblem on Chest Center) */}
+            <circle cx="200" cy="222" r="22" fill="#2d1703" stroke="var(--color-primary)" strokeWidth="2.5" />
+            <circle cx="200" cy="222" r="18" fill="var(--color-secondary)" />
+            <line x1="200" y1="210" x2="200" y2="231" stroke="var(--color-primary)" strokeWidth="2.5" />
+            <line x1="188" y1="216" x2="212" y2="216" stroke="var(--color-primary)" strokeWidth="2.5" />
+            <line x1="188" y1="216" x2="188" y2="225" stroke="var(--color-primary)" strokeWidth="1.5" />
+            <line x1="212" y1="216" x2="212" y2="225" stroke="var(--color-primary)" strokeWidth="1.5" />
+            <circle cx="188" cy="225" r="3.5" fill="var(--color-accent)" />
+            <circle cx="212" cy="225" r="3.5" fill="var(--color-accent)" />
+
+            {/* HP Dominant Accent 심장 (Pulsing Heart Core at cx=200, cy=252) */}
+            <g className="pulse-heart">
+              <path d="M12,5 C10.5,3.5 8,3.5 6.5,5 C5,6.5 5,9 6.5,10.5 L12,16 L17.5,10.5 C19,9 19,6.5 17.5,5 C16,3.5 13.5,3.5 12,5 Z" 
+                    fill="var(--color-accent)" 
+                    transform="translate(188, 244) scale(1.0)" />
+            </g>
+          </g>
+        );
+      } else if (raceBodyType === "기계종_체형") {
+        // --- 2. 기계종 체형 (Slim Mech): 얇고 세로로 긴 비례, 날카로운 각/안테나, 기계식 연결 ---
+        return (
+          <g transform={`translate(200, 200) scale(${size}) translate(-200,-180)`}>
+            {/* Twin Antennae (안테나 - 종족 마커) */}
+            <line x1="182" y1="100" x2="162" y2="40" stroke="var(--color-secondary)" strokeWidth="3" />
+            <circle cx="162" cy="40" r="5" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            
+            <line x1="218" y1="100" x2="238" y2="40" stroke="var(--color-secondary)" strokeWidth="3" />
+            <circle cx="238" cy="40" r="5" fill="var(--color-accent)" filter="url(#visorGlow)" />
+
+            {/* Sharp Hexagon Head */}
+            <polygon points="175,100 225,100 235,160 200,180 165,160" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
+            
+            {/* Glowing Visor Line (Cyan) */}
+            <rect x="180" y="125" width="40" height="8" rx="2" fill="var(--color-accent)" filter="url(#visorGlow)" />
+
+            {/* Segmented Neck */}
+            <rect x="193" y="180" width="14" height="20" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="1.5" />
+            <line x1="193" y1="190" x2="207" y2="190" stroke="var(--color-accent)" strokeWidth="2" />
+
+            {/* Sharp pauldrons */}
+            {/* Left Pauldron */}
+            <polygon points="120,200 160,200 155,225 130,225" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2" />
+            <circle cx="120" cy="200" r="5" fill="var(--color-secondary)" />
+            
+            {/* Right Pauldron */}
+            <polygon points="280,200 240,200 245,225 270,225" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2" />
+            <circle cx="280" cy="200" r="5" fill="var(--color-secondary)" />
+
+            {/* Slim Tall Chest Plate */}
+            <polygon points="155,200 245,200 225,305 175,305" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3.5" />
+
+            {/* Slim mechanical spine */}
+            <rect x="190" y="305" width="20" height="50" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="2" />
+            <circle cx="200" cy="320" r="4" fill="var(--color-accent)" />
+            <circle cx="200" cy="340" r="4" fill="var(--color-accent)" />
+
+            {/* 반도체_휘장 (Emblem on Chest Center) */}
+            <rect x="186" y="218" width="28" height="28" rx="4" fill="#0d1117" stroke="var(--color-accent)" strokeWidth="2" />
+            <rect x="193" y="225" width="14" height="14" fill="var(--color-secondary)" rx="2" />
+            <circle cx="200" cy="232" r="4" fill="var(--color-accent)" />
+            {/* gold pin paths */}
+            <line x1="190" y1="218" x2="190" y2="213" stroke="var(--color-accent)" strokeWidth="1.5" />
+            <line x1="200" y1="218" x2="200" y2="213" stroke="var(--color-accent)" strokeWidth="1.5" />
+            <line x1="210" y1="218" x2="210" y2="213" stroke="var(--color-accent)" strokeWidth="1.5" />
+            <line x1="190" y1="246" x2="190" y2="251" stroke="var(--color-accent)" strokeWidth="1.5" />
+            <line x1="200" y1="246" x2="200" y2="251" stroke="var(--color-accent)" strokeWidth="1.5" />
+            <line x1="210" y1="246" x2="210" y2="251" stroke="var(--color-accent)" strokeWidth="1.5" />
+
+            {/* Dominant Accent 지팡이 (Mechanical staff on right side at cx=290) */}
+            <line x1="295" y1="320" x2="295" y2="100" stroke="var(--color-secondary)" strokeWidth="4" />
+            <polygon points="285,100 305,100 295,70" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            <circle cx="295" cy="85" r="4" fill="#fff" />
+            <circle cx="295" cy="210" r="7" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2" />
+          </g>
+        );
+      } else if (raceBodyType === "화염거인_체형") {
+        // --- 3. 화염거인 체형 (Bulky Giant): 거대하고 육중한 덩치, 둥근 어깨, 머리 불꽃돌기 마커 ---
+        return (
+          <g transform={`translate(200, 240) scale(${size}) translate(-200,-200)`}>
+            {/* Fiery Head Spikes (불꽃돌기 - 종족 마커) */}
+            <path d="M195 90 L200 45 L205 90 Z" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            <path d="M180 95 L170 65 L185 90 Z" fill="var(--color-accent)" />
+            <path d="M220 95 L230 65 L215 90 Z" fill="var(--color-accent)" />
+
+            {/* Bulky low Head */}
+            <path d="M160 135 C160 95 240 95 240 135 L225 155 L175 155 Z" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="3" />
+            
+            {/* Fiery Visor Slit */}
+            <polygon points="175,125 225,125 218,138 182,138" fill="var(--color-accent)" filter="url(#visorGlow)" />
+
+            {/* Giant Rounded Pauldrons (Rounded shoulder caps) */}
+            {/* Left Pauldron */}
+            <circle cx="105" cy="180" r="52" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4" />
+            <path d="M85,135 L65,115 L90,135 Z" fill="var(--color-accent)" filter="url(#visorGlow)" />
+
+            {/* Right Pauldron */}
+            <circle cx="295" cy="180" r="52" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4" />
+            <path d="M315,135 L335,115 L310,135 Z" fill="var(--color-accent)" filter="url(#visorGlow)" />
+
+            {/* Bulky neck collar */}
+            <path d="M150 155 L250 155 L240 175 L160 175 Z" fill="var(--color-secondary)" />
+
+            {/* Massive Circular Chest Body */}
+            <path d="M115,175 L285,175 C315,225 315,305 285,325 L115,325 C85,305 85,225 115,175 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="5.5" />
+
+            {/* Giant abdominal plate */}
+            <path d="M135,325 L265,325 C250,365 150,365 135,325 Z" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="3" />
+
+            {/* 에너지 E&P_휘장 (Derrick Fire Emblem on Chest Center) */}
+            <polygon points="175,195 225,195 215,245 185,245" fill="var(--color-secondary)" stroke="var(--color-accent)" strokeWidth="2.5" />
+            <line x1="200" y1="200" x2="200" y2="240" stroke="var(--color-accent)" strokeWidth="3" />
+            <line x1="185" y1="240" x2="200" y2="210" stroke="var(--color-accent)" strokeWidth="2.5" />
+            <line x1="215" y1="240" x2="200" y2="210" stroke="var(--color-accent)" strokeWidth="2.5" />
+            <circle cx="200" cy="202" r="4.5" fill="#fff" filter="url(#visorGlow)" />
+
+            {/* HP Dominant Accent 심장 (Pulsing Heart Core for Giant at cx=200, cy=282) */}
+            <g className="pulse-heart-giant">
+              <path d="M12,5 C10.5,3.5 8,3.5 6.5,5 C5,6.5 5,9 6.5,10.5 L12,16 L17.5,10.5 C19,9 19,6.5 17.5,5 C16,3.5 13.5,3.5 12,5 Z" 
+                    fill="var(--color-accent)" 
+                    transform="translate(188, 274) scale(1.0)" />
+            </g>
+          </g>
+        );
+      }
+      return null;
     }
 
     // React Character Card Component
@@ -563,7 +1060,20 @@
         provenance
       } = spec;
 
-      // Render star tiers based on levelTier
+      // Hex mappings
+      const primaryColor = colorMap[spec.palette.primary] || "#475569";
+      const secondaryColor = colorMap[spec.palette.secondary] || "#64748b";
+      const accentColor = colorMap[spec.palette.accent] || "#e2e8f0";
+
+      // Inline card styles utilizing CSS Variables scoped to the card
+      const cardStyle = {
+        "--color-primary": primaryColor,
+        "--color-secondary": secondaryColor,
+        "--color-accent": accentColor,
+        "--color-primary-glow": `${primaryColor}33`, /* opacity 0.2 */
+        "--color-accent-glow": `${accentColor}26`,  /* opacity 0.15 */
+      };
+
       const renderStars = () => {
         const stars = [];
         for (let i = 0; i < levelTier; i++) {
@@ -573,30 +1083,32 @@
       };
 
       return (
-        <div className="card-container">
-          {/* 10. Header with ticker and sector label */}
+        <div className="card-container" style={cardStyle}>
+          {/* Swapped Text Layout: Race MAIN, Ticker SUB-MAIN */}
           <div className="card-header">
-            <div className="ticker-section">
-              <span className="ticker-title">{ticker}</span>
-              <span className="sector-badge">{sectorLabel}</span>
+            <div className="title-section">
+              <h2 className="race-main-title">{race}</h2>
+              <div className="ticker-sub-row">
+                <span className="ticker-sub-title">{ticker}</span>
+                <span className="sector-badge">{sectorLabel}</span>
+              </div>
             </div>
             <div className="rarity-tag">{rarityFrame.toUpperCase()}</div>
           </div>
 
-          {/* Graphic Area */}
+          {/* Graphic Viewport */}
           <div className="card-graphic-wrapper">
-            {/* SVG Renderer */}
             <svg width="100%" height="100%" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                {/* 4. Aura glow effect centered behind the character */}
+                {/* Aura gradient glow based on spec.aura */}
                 <radialGradient id="auraGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="var(--color-ruby)" stopOpacity={aura} />
-                  <stop offset="40%" stopColor="var(--color-gold)" stopOpacity={aura * 0.5} />
+                  <stop offset="0%" stopColor="var(--color-accent)" stopOpacity={aura} />
+                  <stop offset="40%" stopColor="var(--color-primary)" stopOpacity={aura * 0.5} />
                   <stop offset="100%" stopColor="#000" stopOpacity="0" />
                 </radialGradient>
                 
-                {/* Visual filter for visor ruby glow */}
-                <filter id="rubyNeon" x="-20%" y="-20%" width="140%" height="140%">
+                {/* Visor glowing filter */}
+                <filter id="visorGlow" x="-20%" y="-20%" width="140%" height="140%">
                   <feGaussianBlur stdDeviation="3" result="blur" />
                   <feMerge>
                     <feMergeNode in="blur" />
@@ -605,81 +1117,30 @@
                 </filter>
               </defs>
 
-              {/* Background Aura circle */}
-              <circle cx="200" cy="200" r="160" fill="url(#auraGlow)" />
+              {/* Aura Background */}
+              <circle cx="200" cy="200" r="165" className="aura-circle" />
 
-              {/* 3. Character group scaled by 'size' from center (200, 200) */}
-              <g transform={`translate(200, 200) scale(${size}) translate(-200, -200)`}>
-                {/* --- Knight Body Parts --- */}
-                
-                {/* Helmet Crest (Bronze) */}
-                <path d="M170 100 L200 45 L230 100 Z" fill="var(--color-bronze)" stroke="#8c4800" strokeWidth="2" />
-                
-                {/* Helmet Dome (Gold) */}
-                <path d="M155 140 C155 80 245 80 245 140 L240 160 L160 160 Z" fill="var(--color-gold)" stroke="var(--color-bronze)" strokeWidth="3" />
-                
-                {/* Visor Area (Dark) */}
-                <rect x="168" y="125" width="64" height="22" rx="3" fill="#111" stroke="var(--color-bronze)" strokeWidth="2" />
-                
-                {/* Glowing Ruby Slit (Visor Neon Slit) */}
-                <rect x="174" y="133" width="52" height="5" rx="1.5" fill="var(--color-ruby)" filter="url(#rubyNeon)" />
-
-                {/* 1. Shoulder Pauldrons - Heavy Shoulder Armor (종족 마커) */}
-                {/* Left Pauldron */}
-                <path d="M80 180 C80 135 145 140 145 185 L120 220 Z" fill="var(--color-gold)" stroke="var(--color-bronze)" strokeWidth="3" />
-                <polygon points="80,180 70,165 95,170" fill="var(--color-bronze)" stroke="#8c4800" strokeWidth="1" />
-                <polygon points="85,195 72,190 92,185" fill="var(--color-bronze)" stroke="#8c4800" strokeWidth="1" />
-
-                {/* Right Pauldron */}
-                <path d="M320 180 C320 135 255 140 255 185 L280 220 Z" fill="var(--color-gold)" stroke="var(--color-bronze)" strokeWidth="3" />
-                <polygon points="320,180 330,165 305,170" fill="var(--color-bronze)" stroke="#8c4800" strokeWidth="1" />
-                <polygon points="315,195 328,190 308,185" fill="var(--color-bronze)" stroke="#8c4800" strokeWidth="1" />
-
-                {/* Heavy Collar Neck Guard */}
-                <path d="M145 160 L255 160 L235 185 L165 185 Z" fill="var(--color-bronze)" stroke="#8c4800" strokeWidth="2" />
-
-                {/* Heavy Breastplate (Trapezoidal armor body) */}
-                <polygon points="135,185 265,185 285,285 115,285" fill="var(--color-gold)" stroke="var(--color-bronze)" strokeWidth="4" />
-
-                {/* Plated Abdomen (Dwarf style segmentation) */}
-                <polygon points="120,285 280,285 272,315 128,315" fill="var(--color-bronze)" stroke="#8c4800" strokeWidth="2.5" />
-                <polygon points="128,315 272,315 260,345 140,345" fill="var(--color-gold)" stroke="var(--color-bronze)" strokeWidth="2.5" />
-
-                {/* 2. 은행_휘장 (Chest Center Coin & Scales emblem) */}
-                <circle cx="200" cy="222" r="22" fill="#2d1703" stroke="var(--color-gold)" strokeWidth="2.5" />
-                <circle cx="200" cy="222" r="18" fill="var(--color-bronze)" />
-                {/* Scales inside emblem */}
-                <line x1="200" y1="210" x2="200" y2="231" stroke="var(--color-gold)" strokeWidth="2.5" />
-                <line x1="188" y1="216" x2="212" y2="216" stroke="var(--color-gold)" strokeWidth="2.5" />
-                <line x1="188" y1="216" x2="188" y2="225" stroke="var(--color-gold)" strokeWidth="1.5" />
-                <line x1="212" y1="216" x2="212" y2="225" stroke="var(--color-gold)" strokeWidth="1.5" />
-                <circle cx="188" cy="225" r="3.5" fill="var(--color-ruby)" />
-                <circle cx="212" cy="225" r="3.5" fill="var(--color-ruby)" />
-
-                {/* 8. Dominant Accent '심장' (Heart emblem - pulsing at cx=200, cy=252) */}
-                <g className="pulse-heart">
-                  {/* Outer glow heart path */}
-                  <path d="M12,5 C10.5,3.5 8,3.5 6.5,5 C5,6.5 5,9 6.5,10.5 L12,16 L17.5,10.5 C19,9 19,6.5 17.5,5 C16,3.5 13.5,3.5 12,5 Z" 
-                        fill="var(--color-ruby)" 
-                        transform="translate(188, 244) scale(1.0)" />
-                </g>
-              </g>
+              {/* Character Silhouettes (Split based on raceBodyType) */}
+              <CharacterSilhouette 
+                raceBodyType={spec.raceBodyType} 
+                size={size} 
+                aura={aura} 
+              />
             </svg>
           </div>
 
-          {/* 5. Level Tier stars */}
+          {/* Level Stars */}
           <div className="level-tier-stars">
             {renderStars()}
           </div>
 
-          {/* 9. 7 Stats display with hover tooltips */}
+          {/* Stats list & hovers */}
           <div className="stats-panel">
             {Object.entries(stats).map(([statName, val]) => {
               const isDominant = statName === dominantStat;
               const isEstimated = estimatedBadge.stats.includes(statName);
               const prov = provenance[statName];
               
-              // Map stat names to Korean labels
               const labelMap = {
                 "HP": "HP",
                 "ATK": "ATK (공격)",
@@ -696,7 +1157,7 @@
                     <div className="stat-name-box">
                       <span className="stat-highlight">{labelMap[statName]}</span>
                       {isEstimated && (
-                        <span className="estimated-pill" title="클릭하여 데이터 원천 보기">추정</span>
+                        <span className="estimated-pill">추정</span>
                       )}
                     </div>
                     <span className="stat-value">{val}</span>
@@ -708,7 +1169,7 @@
                     />
                   </div>
 
-                  {/* 10. Interactive Provenance Tooltip (Shown on Hover/Focus) */}
+                  {/* Floating Provenance Tooltip */}
                   {prov && (
                     <div className="provenance-tooltip">
                       <div className="tooltip-header">
@@ -733,7 +1194,7 @@
                           <span className="tooltip-value">{prov.lvl_mult.toFixed(4)}</span>
                         </div>
                         <div className="tooltip-item">
-                          <span className="tooltip-label">기본 스탯 (Base):</span>
+                          <span className="tooltip-label">기본 능력치 (Base):</span>
                           <span className="tooltip-value">{prov.base_value}</span>
                         </div>
                         <div className="tooltip-item">
@@ -753,25 +1214,27 @@
             })}
           </div>
 
-          {/* 10. Footer with Race name and subfaction description */}
+          {/* Subfaction & Type labels in Footer */}
           <div className="card-footer">
-            <h2 className="card-race-title">{race}</h2>
             <div className="card-subfaction-desc">{spec.subfaction} 분파 ({spec.ticker})</div>
+            <div className="card-type-label">{spec.type}</div>
           </div>
         </div>
       );
     }
 
-    // App wrapper
+    // App view rendering 3 cards side-by-side
     function App() {
       return (
-        <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <CharacterCard spec={jpmSpec} />
+        <div className="compare-container">
+          <CharacterCard spec={portfolioSpecs.JPM} />
+          <CharacterCard spec={portfolioSpecs.NVDA} />
+          <CharacterCard spec={portfolioSpecs.XOM} />
         </div>
       );
     }
 
-    // Render the App
+    // Mount point
     const rootElement = document.getElementById("root");
     const root = ReactDOM.createRoot(rootElement);
     root.render(<App />);
