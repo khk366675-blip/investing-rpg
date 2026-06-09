@@ -273,7 +273,9 @@ def generate_appearance_spec(ticker: str, data_2c: dict) -> dict:
         "accents": accents,
         "dominantStat": dominant_stat,
         "estimatedBadge": estimated_badge,
-        "type": spec_type
+        "type": spec_type,
+        "stats": stats,
+        "provenance": provenance
     }
 
 def main():
