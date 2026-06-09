@@ -2340,38 +2340,50 @@
           </g>
         );
       } else if (raceBodyType === "곡물수호자_체형") {
-        // --- 6. 곡물수호자 (KO): 둥글고 펑퍼짐한 체형, 곡식다발 마커 ---
+        // --- 6. 곡물수호자 (KO): 가로로 넓고 둥근 펑퍼짐한 든든체형, 가슴 앞 둥근방패/밀이삭 마커 ---
         return (
           <g transform={`translate(200, 210) scale(${size}) translate(-200,-180)`}>
-            {/* Round Head */}
-            <circle cx="200" cy="130" r="28" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
-            <circle cx="200" cy="130" r="12" fill="var(--color-accent)" filter="url(#visorGlow)" />
-            {/* Plump Body */}
-            <path d="M130 190 C110 265 290 265 270 190 L240 330 L160 330 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3.5" />
-            {/* Wheat sheaf (곡식다발 마커) on left side */}
-            <g transform="translate(100, 210) rotate(-15)">
-              <rect x="5" y="15" width="8" height="40" rx="3" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="1.5" />
-              <path d="M9 15 Q-5 -10 -10 -25 Q15 -10 9 15 Z" fill="var(--color-accent)" />
-              <path d="M9 15 Q23 -10 28 -25 Q10 -10 9 15 Z" fill="var(--color-accent)" />
-              <circle cx="9" cy="-15" r="4" fill="var(--color-accent)" filter="url(#visorGlow)" />
-            </g>
+            {/* Plump pear-shaped Body (둥근 어깨 및 가로형 하체) */}
+            <path d="M100 220 C100 160 300 160 300 220 C300 290 280 340 200 340 C120 340 100 290 100 220 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3.5" />
+            {/* Round Head ( nestled in body ) */}
+            <circle cx="200" cy="125" r="24" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
+            <circle cx="200" cy="125" r="9" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            {/* Arms holding the shield */}
+            <path d="M125 220 C125 220 145 255 170 250" stroke="var(--color-primary)" strokeWidth="12" strokeLinecap="round" fill="none" />
+            <path d="M275 220 C275 220 255 255 230 250" stroke="var(--color-primary)" strokeWidth="12" strokeLinecap="round" fill="none" />
+            {/* Large round wooden shield (둥근 방패 마커) in center */}
+            <circle cx="200" cy="245" r="38" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="3" />
+            <circle cx="200" cy="245" r="30" fill="none" stroke="var(--color-primary)" strokeWidth="1.5" strokeDasharray="4 2" />
+            {/* Golden wheat sheaf engravings on shield */}
+            <line x1="200" y1="225" x2="200" y2="265" stroke="var(--color-accent)" strokeWidth="2.5" />
+            <path d="M200 235 Q188 225 186 215 Q198 228 200 235 Z" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            <path d="M200 235 Q212 225 214 215 Q202 228 200 235 Z" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            <path d="M200 248 Q188 238 186 228 Q198 241 200 248 Z" fill="var(--color-accent)" />
+            <path d="M200 248 Q212 238 214 228 Q202 241 200 248 Z" fill="var(--color-accent)" />
           </g>
         );
       } else if (raceBodyType === "강철공방_체형") {
-        // --- 7. 강철공방 (GE): 각지고 비대칭 체형, 거대 망치팔 마커 ---
+        // --- 7. 강철공방 (GE): 각지고 우락부락, 극심한 좌우 비대칭, 거대 망치팔 마커 ---
         return (
           <g transform={`translate(200, 200) scale(${size}) translate(-200,-180)`}>
-            {/* Spiked Helm */}
-            <polygon points="175,120 200,75 225,120 215,145 185,145" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
-            <path d="M185 110 L215 110 L210 120 L190 123 Z" fill="var(--color-accent)" />
-            {/* Bulky chest */}
-            <polygon points="120,180 270,180 250,290 140,290" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4" />
-            {/* Giant Hammer Arm (거대 망치팔 마커) */}
-            <rect x="250" y="195" width="45" height="18" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="2" transform="rotate(25 250 195)" />
-            <rect x="282" y="145" width="28" height="85" rx="5" fill="var(--color-accent)" stroke="var(--color-primary)" strokeWidth="3" transform="rotate(15 285 145)" filter="url(#visorGlow)" />
-            {/* Gear symbol on left shoulder */}
-            <circle cx="125" cy="180" r="14" fill="var(--color-secondary)" />
-            <circle cx="125" cy="180" r="6" fill="#111" />
+            {/* Welder-style Helmet */}
+            <polygon points="175,100 220,105 212,160 180,152" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
+            <polygon points="182,125 210,128 208,137 184,134" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            {/* Slanted, blocky chest (비대칭 골격 구조) */}
+            <polygon points="130,170 235,190 215,295 150,285" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4" />
+            {/* Left side (Spindly, small joint and gear) */}
+            <circle cx="125" cy="180" r="12" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2" />
+            <path d="M125 185 L115 240 L125 250" stroke="var(--color-secondary)" strokeWidth="4" fill="none" strokeLinecap="round" />
+            <circle cx="125" cy="180" r="8" fill="#111" stroke="var(--color-accent)" strokeWidth="1.5" />
+            {/* Right side (Massive blocky shoulder & pauldron) */}
+            <rect x="225" y="145" width="55" height="55" rx="6" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3.5" />
+            <line x1="235" y1="155" x2="270" y2="190" stroke="var(--color-secondary)" strokeWidth="2" />
+            {/* Hydraulic connection and Heavy armatures */}
+            <polygon points="255,200 295,210 275,260 245,240" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="2" />
+            {/* Giant Hydraulic Power Hammer (거대 망치팔 마커) */}
+            <rect x="235" y="255" width="95" height="50" rx="5" fill="var(--color-accent)" stroke="var(--color-primary)" strokeWidth="3" filter="url(#visorGlow)" />
+            <rect x="245" y="260" width="75" height="10" fill="var(--color-secondary)" opacity="0.4" />
+            <polygon points="270,305 290,305 300,320 260,320" fill="var(--color-secondary)" />
           </g>
         );
       } else if (raceBodyType === "광맥족_체형") {
@@ -2392,22 +2404,49 @@
           </g>
         );
       } else if (raceBodyType === "성채수호족_체형") {
-        // --- 9. 성채수호족 (SEG): 세로로 높은 탑형 몸통, 성가퀴(망루) 머리 윤곽 마커 ---
+        // --- 9. 성채수호족 (SEG): 세로로 높이 솟은 탑형 몸통, 성가퀴(망루) 요철 및 다중 창문 마커 ---
         return (
           <g transform={`translate(200, 200) scale(${size}) translate(-200,-160)`}>
-            {/* Castle Battlement head (성가퀴 망루 윤곽 마커) */}
-            <path d="M170 130 L170 95 L182 95 L182 105 L194 105 L194 95 L206 95 L206 105 L218 105 L218 95 L230 95 L230 130 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="2.5" />
-            <rect x="180" y="112" width="40" height="7" fill="var(--color-accent)" filter="url(#visorGlow)" />
-            {/* Tall Tower Body */}
-            <rect x="145" y="130" width="110" height="190" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4.5" />
-            <line x1="145" y1="190" x2="255" y2="190" stroke="var(--color-secondary)" strokeWidth="2" />
-            <line x1="145" y1="250" x2="255" y2="250" stroke="var(--color-secondary)" strokeWidth="2" />
-            {/* Vertical brick lines */}
-            <line x1="180" y1="130" x2="180" y2="190" stroke="var(--color-secondary)" strokeWidth="1.5" />
-            <line x1="220" y1="130" x2="220" y2="190" stroke="var(--color-secondary)" strokeWidth="1.5" />
-            <line x1="200" y1="190" x2="200" y2="250" stroke="var(--color-secondary)" strokeWidth="1.5" />
-            <line x1="180" y1="250" x2="180" y2="320" stroke="var(--color-secondary)" strokeWidth="1.5" />
-            <line x1="220" y1="250" x2="220" y2="320" stroke="var(--color-secondary)" strokeWidth="1.5" />
+            {/* Castle Central Keep (높고 슬림한 성채 몸체) */}
+            <rect x="165" y="105" width="70" height="240" rx="3" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="4.5" />
+            {/* Top Central Tower Battlement Head (성가퀴 망루 윤곽 마커) */}
+            <path d="M165 105 L165 75 L178 75 L178 85 L188 85 L188 75 L200 75 L200 85 L212 85 L212 75 L222 75 L222 85 L235 85 L235 105 Z" fill="var(--color-primary)" stroke="var(--color-secondary)" strokeWidth="3" />
+            <rect x="180" y="93" width="40" height="6" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            {/* Left Shoulder Tower Keep */}
+            <rect x="135" y="150" width="30" height="15" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="2" />
+            <rect x="135" y="165" width="30" height="130" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="2.5" />
+            {/* Right Shoulder Tower Keep */}
+            <rect x="235" y="150" width="30" height="15" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="2" />
+            <rect x="235" y="165" width="30" height="130" fill="var(--color-secondary)" stroke="var(--color-primary)" strokeWidth="2.5" />
+            {/* Brick Lines details */}
+            <line x1="165" y1="150" x2="235" y2="150" stroke="var(--color-secondary)" strokeWidth="2" />
+            <line x1="165" y1="190" x2="235" y2="190" stroke="var(--color-secondary)" strokeWidth="2" />
+            <line x1="165" y1="230" x2="235" y2="230" stroke="var(--color-secondary)" strokeWidth="2" />
+            <line x1="165" y1="270" x2="235" y2="270" stroke="var(--color-secondary)" strokeWidth="2" />
+            <line x1="165" y1="310" x2="235" y2="310" stroke="var(--color-secondary)" strokeWidth="2" />
+            
+            <line x1="135" y1="200" x2="165" y2="200" stroke="var(--color-primary)" strokeWidth="1.5" />
+            <line x1="135" y1="250" x2="165" y2="250" stroke="var(--color-primary)" strokeWidth="1.5" />
+            <line x1="235" y1="200" x2="265" y2="200" stroke="var(--color-primary)" strokeWidth="1.5" />
+            <line x1="235" y1="250" x2="265" y2="250" stroke="var(--color-primary)" strokeWidth="1.5" />
+
+            <line x1="200" y1="105" x2="200" y2="150" stroke="var(--color-secondary)" strokeWidth="1.5" />
+            <line x1="185" y1="150" x2="185" y2="190" stroke="var(--color-secondary)" strokeWidth="1.5" />
+            <line x1="215" y1="150" x2="215" y2="190" stroke="var(--color-secondary)" strokeWidth="1.5" />
+            <line x1="200" y1="190" x2="200" y2="230" stroke="var(--color-secondary)" strokeWidth="1.5" />
+            <line x1="185" y1="230" x2="185" y2="270" stroke="var(--color-secondary)" strokeWidth="1.5" />
+            <line x1="215" y1="230" x2="215" y2="270" stroke="var(--color-secondary)" strokeWidth="1.5" />
+            <line x1="200" y1="270" x2="200" y2="310" stroke="var(--color-secondary)" strokeWidth="1.5" />
+            <line x1="185" y1="310" x2="185" y2="345" stroke="var(--color-secondary)" strokeWidth="1.5" />
+            <line x1="215" y1="310" x2="215" y2="345" stroke="var(--color-secondary)" strokeWidth="1.5" />
+
+            {/* Glowing Windows (다중 창문 마커) */}
+            <rect x="177" y="165" width="10" height="15" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            <rect x="213" y="165" width="10" height="15" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            <rect x="195" y="205" width="10" height="18" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            <rect x="177" y="285" width="10" height="15" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            <rect x="213" y="285" width="10" height="15" fill="var(--color-accent)" filter="url(#visorGlow)" />
+            <rect x="195" y="245" width="10" height="18" fill="var(--color-accent)" filter="url(#visorGlow)" />
           </g>
         );
       } else if (raceBodyType === "전류정령_체형") {
