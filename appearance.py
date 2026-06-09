@@ -14,17 +14,32 @@ from synthesis import get_ticker_info, synthesize_portfolio_stats, load_benchmar
 
 # 1. GICS Sector to RPG Race Mapping
 SECTOR_RACE_MAP = {
-    "Technology": "마도공학",
-    "Financial Services": "드워프",
-    "Healthcare": "엘프",
-    "Consumer Cyclical": "수인",
-    "Consumer Defensive": "인간",
-    "Industrials": "오크",
-    "Energy": "용족",
-    "Basic Materials": "정령",
-    "Real Estate": "거인",
-    "Utilities": "천사",
-    "Communication Services": "요정"
+    "Financial Services": "황금기사단",
+    "Technology": "기계종",
+    "Healthcare": "생명교단",
+    "Consumer Cyclical": "유랑상단",
+    "Consumer Defensive": "곡물수호자",
+    "Industrials": "강철공방",
+    "Energy": "화염거인",
+    "Basic Materials": "광맥족",
+    "Real Estate": "성채수호족",
+    "Utilities": "전류정령",
+    "Communication Services": "파동전령"
+}
+
+# 1.1. GICS Sector to Korean Sector Label Mapping
+SECTOR_LABEL_MAP = {
+    "Financial Services": "금융",
+    "Technology": "테크",
+    "Healthcare": "헬스케어",
+    "Consumer Cyclical": "경기소비재",
+    "Consumer Defensive": "필수소비재",
+    "Industrials": "산업재",
+    "Energy": "에너지",
+    "Basic Materials": "소재",
+    "Real Estate": "부동산",
+    "Utilities": "유틸리티",
+    "Communication Services": "커뮤니케이션"
 }
 
 # 2. GICS Industry to Subfaction Mapping Table
@@ -120,17 +135,17 @@ STAT_ACCENT_MAP = {
 
 # 4. Color Palette Mapping (Placeholders for 3a)
 PALETTE_MAP = {
-    "마도공학": {"primary": "Cyber_Blue", "secondary": "Neon_Purple", "accent": "Cyan"},
-    "드워프": {"primary": "Gold", "secondary": "Bronze", "accent": "Ruby"},
-    "엘프": {"primary": "Forest_Green", "secondary": "Silver", "accent": "Emerald"},
-    "수인": {"primary": "Orange", "secondary": "Brown", "accent": "Amber"},
-    "인간": {"primary": "Brown", "secondary": "Tan", "accent": "Wheat"},
-    "오크": {"primary": "Steel_Gray", "secondary": "Iron", "accent": "Rust"},
-    "용족": {"primary": "Crimson", "secondary": "Charcoal", "accent": "Fire"},
-    "정령": {"primary": "Earth_Brown", "secondary": "Stone", "accent": "Topaz"},
-    "거인": {"primary": "Granite", "secondary": "Slate", "accent": "Quartz"},
-    "천사": {"primary": "Sky_Blue", "secondary": "White", "accent": "Gold"},
-    "요정": {"primary": "Pink", "secondary": "Lavender", "accent": "Rose"},
+    "황금기사단": {"primary": "Gold", "secondary": "Bronze", "accent": "Ruby"},
+    "기계종": {"primary": "Cyber_Blue", "secondary": "Neon_Purple", "accent": "Cyan"},
+    "생명교단": {"primary": "Forest_Green", "secondary": "Silver", "accent": "Emerald"},
+    "유랑상단": {"primary": "Orange", "secondary": "Brown", "accent": "Amber"},
+    "곡물수호자": {"primary": "Brown", "secondary": "Tan", "accent": "Wheat"},
+    "강철공방": {"primary": "Steel_Gray", "secondary": "Iron", "accent": "Rust"},
+    "화염거인": {"primary": "Crimson", "secondary": "Charcoal", "accent": "Fire"},
+    "광맥족": {"primary": "Earth_Brown", "secondary": "Stone", "accent": "Topaz"},
+    "성채수호족": {"primary": "Granite", "secondary": "Slate", "accent": "Quartz"},
+    "전류정령": {"primary": "Sky_Blue", "secondary": "White", "accent": "Gold"},
+    "파동전령": {"primary": "Pink", "secondary": "Lavender", "accent": "Rose"},
     "지수형": {"primary": "Neutral_Gray", "secondary": "Silver", "accent": "Platinum"}
 }
 
@@ -188,17 +203,17 @@ def generate_appearance_spec(ticker: str, data_2c: dict) -> dict:
     industry = info.get("industry")
     market_cap = info.get("marketCap")
     
-    # 1. Determine Race & Body Type
+    # 1. Determine Race, Body Type, & Sector Label (Step 3a-fix)
     if asset_type in ("ETF", "REIT"):
         race = "지수형"
         race_body_type = "중립골격"
+        sector_label = "지수형"
     else:
-        race = SECTOR_RACE_MAP.get(sector)
-        if not race:
-            # Fallback if sector is completely missing
-            race = "인간"
-            print(f"[Warning] Ticker '{ticker}' sector '{sector}' not found in SECTOR_RACE_MAP. Defaulted to '인간'.")
+        if sector not in SECTOR_RACE_MAP:
+            raise ValueError(f"FLAG: Sector '{sector}' for ticker '{ticker}' is not found in SECTOR_RACE_MAP.")
+        race = SECTOR_RACE_MAP[sector]
         race_body_type = f"{race}_체형"
+        sector_label = SECTOR_LABEL_MAP[sector]
         
     # 2. Determine Subfaction
     if asset_type in ("ETF", "REIT"):
@@ -249,6 +264,7 @@ def generate_appearance_spec(ticker: str, data_2c: dict) -> dict:
         "race": race,
         "raceBodyType": race_body_type,
         "subfaction": subfaction,
+        "sectorLabel": sector_label,
         "palette": palette,
         "size": size,
         "aura": aura,
@@ -288,20 +304,22 @@ def main():
     
     print("\n" + "="*80 + "\n")
     
-    # 2. Subfaction Mapping Validation Table
-    print("### 2. 분파 매핑 검증")
-    print("| Ticker | Sector | Industry | Expected Subfaction | Actual Subfaction | Matching |")
-    print("| --- | --- | --- | --- | --- | --- |")
+    # 2. Subfaction Mapping & Sector Label Validation Table
+    print("### 2. 분파 및 섹터 라벨 매핑 검증")
+    print("| Ticker | GICS Sector | Expected Race | Actual Race | Expected Label | Actual Label | Subfaction | Matching |")
+    print("| --- | --- | --- | --- | --- | --- | --- | --- |")
     checks = [
-        ("AAPL", "Technology", "Consumer Electronics", "기타", specs["AAPL"]["subfaction"]),
-        ("NVDA", "Technology", "Semiconductors", "반도체", specs["NVDA"]["subfaction"]),
-        ("JPM", "Financial Services", "Banks - Diversified", "은행", specs["JPM"]["subfaction"]),
-        ("KO", "Consumer Defensive", "Beverages - Non-Alcoholic", "식음료", specs["KO"]["subfaction"]),
-        ("XOM", "Energy", "Oil & Gas Integrated", "에너지 E&P", specs["XOM"]["subfaction"])
+        ("AAPL", "Technology", "기계종", specs["AAPL"]["race"], "테크", specs["AAPL"]["sectorLabel"], specs["AAPL"]["subfaction"]),
+        ("NVDA", "Technology", "기계종", specs["NVDA"]["race"], "테크", specs["NVDA"]["sectorLabel"], specs["NVDA"]["subfaction"]),
+        ("JPM", "Financial Services", "황금기사단", specs["JPM"]["race"], "금융", specs["JPM"]["sectorLabel"], specs["JPM"]["subfaction"]),
+        ("KO", "Consumer Defensive", "곡물수호자", specs["KO"]["race"], "필수소비재", specs["KO"]["sectorLabel"], specs["KO"]["subfaction"]),
+        ("XOM", "Energy", "화염거인", specs["XOM"]["race"], "에너지", specs["XOM"]["sectorLabel"], specs["XOM"]["subfaction"]),
+        ("SEG", "Real Estate", "성채수호족", specs["SEG"]["race"], "부동산", specs["SEG"]["sectorLabel"], specs["SEG"]["subfaction"]),
+        ("RIVN", "Consumer Cyclical", "유랑상단", specs["RIVN"]["race"], "경기소비재", specs["RIVN"]["sectorLabel"], specs["RIVN"]["subfaction"])
     ]
-    for tick, sec, ind, exp_sub, act_sub in checks:
-        matching = "OK" if exp_sub == act_sub else "FAIL"
-        print(f"| {tick} | {sec} | {ind} | {exp_sub} | {act_sub} | {matching} |")
+    for tick, sec, exp_race, act_race, exp_lbl, act_lbl, sub in checks:
+        matching = "OK" if (exp_race == act_race and exp_lbl == act_lbl) else "FAIL"
+        print(f"| {tick} | {sec} | {exp_race} | {act_race} | {exp_lbl} | {act_lbl} | {sub} | {matching} |")
         
     print("\n" + "="*80 + "\n")
     
@@ -322,10 +340,6 @@ def main():
             "숙련": {"value": 500, "estimated": False, "lvl_mult": 0.70}
         }
     }
-    # Temporarily insert dummy info into local cached memory helper function return value
-    # Let's mock get_ticker_info for DUMMY_TECH by monkeypatching or handling it in generate_appearance_spec.
-    # To keep code clean, we can define a mock function or just write it directly.
-    # Let's write a small wrapper in generate_appearance_spec to handle mock tickers or just test directly:
     global get_ticker_info
     original_get_ticker_info = get_ticker_info
     def mock_get_ticker_info(ticker):
@@ -337,7 +351,8 @@ def main():
     try:
         dummy_spec = generate_appearance_spec(dummy_ticker, dummy_data)
         print(f"Ticker: {dummy_ticker} -> Sector: Technology, Industry: Quantum Magic")
-        print(f"Mapped Race: {dummy_spec['race']} (Expected: 마도공학)")
+        print(f"Mapped Race: {dummy_spec['race']} (Expected: 기계종)")
+        print(f"Mapped Sector Label: {dummy_spec['sectorLabel']} (Expected: 테크)")
         print(f"Mapped Subfaction: {dummy_spec['subfaction']} (Expected: 기타)")
         print(f"Fallback check result: {'SUCCESS (기타 안착)' if dummy_spec['subfaction'] == '기타' else 'FAIL'}")
     finally:
